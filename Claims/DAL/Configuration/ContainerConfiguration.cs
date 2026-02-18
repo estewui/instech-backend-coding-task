@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using Testcontainers.MongoDb;
 using Testcontainers.MsSql;
 using Microsoft.EntityFrameworkCore;
-using DAL.Data2;
+using DAL.Data;
 
 namespace DAL.Configuration
 {
