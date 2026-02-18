@@ -1,10 +1,14 @@
-﻿namespace Claims.Auditing
+﻿using Auditing.Infrastructure.Interfaces;
+using DAL.Data;
+using DAL.Models.Audit;
+
+namespace DAL.Services
 {
-    public class Auditer
+    public class DalAuditService : IDalAuditService
     {
         private readonly AuditContext _auditContext;
 
-        public Auditer(AuditContext auditContext)
+        public DalAuditService(AuditContext auditContext)
         {
             _auditContext = auditContext;
         }
@@ -21,7 +25,7 @@
             _auditContext.Add(claimAudit);
             _auditContext.SaveChanges();
         }
-        
+
         public void AuditCover(string id, string httpRequestType)
         {
             var coverAudit = new CoverAudit()

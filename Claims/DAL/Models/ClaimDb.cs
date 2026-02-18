@@ -1,9 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Claims
+namespace DAL.Models
 {
-    public class Claim
+    public class ClaimDb
     {
         [BsonId]
         public string Id { get; set; }
