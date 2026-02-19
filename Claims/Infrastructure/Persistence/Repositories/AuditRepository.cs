@@ -1,16 +1,15 @@
-﻿using Auditing.Infrastructure.Interfaces;
-using DAL.Data;
-using DAL.Models.Audit;
+﻿using Application.Abstractions.Persistence;
+using Domain.Entities;
 
-namespace DAL.Services
+namespace Infrastructure.Persistence.Repositories
 {
-    public class DalAuditService : IDalAuditService
+    public class AuditRepository : IAuditRepository
     {
-        private readonly AuditContext _auditContext;
+        private readonly AuditContext _db;
 
-        public DalAuditService(AuditContext auditContext)
+        public AuditRepository(AuditContext db)
         {
-            _auditContext = auditContext;
+            _db = db;
         }
 
         public void AuditClaim(string id, string httpRequestType)
@@ -22,8 +21,8 @@ namespace DAL.Services
                 ClaimId = id
             };
 
-            _auditContext.Add(claimAudit);
-            _auditContext.SaveChanges();
+            _db.Add(claimAudit);
+            _db.SaveChanges();
         }
 
         public void AuditCover(string id, string httpRequestType)
@@ -35,8 +34,8 @@ namespace DAL.Services
                 CoverId = id
             };
 
-            _auditContext.Add(coverAudit);
-            _auditContext.SaveChanges();
+            _db.Add(coverAudit);
+            _db.SaveChanges();
         }
     }
 }

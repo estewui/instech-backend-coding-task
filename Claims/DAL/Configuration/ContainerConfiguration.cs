@@ -6,6 +6,8 @@ using Testcontainers.MongoDb;
 using Testcontainers.MsSql;
 using Microsoft.EntityFrameworkCore;
 using DAL.Data;
+using Auditing.Infrastructure.Interfaces;
+using DAL.Services;
 
 namespace DAL.Configuration
 {
@@ -36,6 +38,17 @@ namespace DAL.Configuration
                 var database = client.GetDatabase(configuration["MongoDb:DatabaseName"]); // Use a default/test database name
                 options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
             });
+
+            services.AddScoped<IDalAuditService, DalAuditService>();
+            services.AddScoped<IDalClaimsService, DalClaimsService>();
+            services.AddScoped<IDalCoversService, DalCoversService>();
+        }
+
+        public static void ApplyMigrations(this IServiceProvider services)
+        {
+            using var scope = services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AuditContext>();
+            db.Database.Migrate();
         }
     }
 }

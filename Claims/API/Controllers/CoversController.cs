@@ -1,7 +1,5 @@
-using Auditing.Services;
-using Business.Models;
-using Business.Services;
-using DAL.Services;
+using Application.Services;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Claims.Controllers;
@@ -11,33 +9,31 @@ namespace Claims.Controllers;
 public class CoversController : ControllerBase
 {
     private readonly ILogger<CoversController> _logger;
-    private readonly IAuditService _auditService;
-    private readonly IDalCoversService _dalCoversService;
+    private readonly ICoverService _coverService;
 
-    public CoversController(ILogger<CoversController> logger, IAuditService auditService, IDalCoversService dalCoversService)
+    public CoversController(ILogger<CoversController> logger, ICoverService coverService)
     {
         _logger = logger;
-        _auditService = auditService;
-        _dalCoversService = dalCoversService;
+        _coverService = coverService;
     }
 
     [HttpPost("compute")]
     public ActionResult ComputePremium(DateTime startDate, DateTime endDate, CoverType coverType)
     {
-        return Ok(CoversService.ComputePremium(startDate, endDate, coverType));
+        return Ok(_coverService.ComputePremium(startDate, endDate, coverType));
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Cover>>> GetAsync()
     {
-        var results = await _dalCoversService.GetAll();
+        var results = await _coverService.GetAll();
         return Ok(results);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Cover>> GetAsync(string id)
     {
-        var result = await _dalCoversService.GetById(id);
+        var result = await _coverService.GetById(id);
         return Ok(result);
     }
 
@@ -45,18 +41,19 @@ public class CoversController : ControllerBase
     public async Task<ActionResult> CreateAsync(Cover cover)
     {
         cover.Id = Guid.NewGuid().ToString();
-        cover.Premium = CoversService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
+        cover.Premium = _coverService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
 
-        _dalCoversService.Create(cover);
-        _auditService.AuditCover(cover.Id, "POST");
+        _coverService.Create(cover);
+        //_auditService.AuditCover(cover.Id, "POST");
 
         return Ok(cover);
     }
 
     [HttpDelete("{id}")]
-    public async Task DeleteAsync(string id)
+    public async Task<ActionResult> DeleteAsync(string id)
     {
-        await _dalCoversService.DeleteById(id);
-        _auditService.AuditCover(id, "DELETE");
+        await _coverService.DeleteById(id);
+        //_auditService.AuditCover(id, "DELETE");
+        return NoContent();
     }
 }

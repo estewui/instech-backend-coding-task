@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace Business.Models
+﻿namespace Domain.Entities
 {
     public class Claim
     {

@@ -1,4 +1,4 @@
-﻿namespace Business.Models
+﻿namespace Domain.Entities
 {
     public class Cover
     {
