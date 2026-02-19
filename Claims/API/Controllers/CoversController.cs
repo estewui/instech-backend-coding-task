@@ -1,5 +1,7 @@
 using Application.Services;
-using Domain.Entities;
+using API.Contracts.Requests;
+using API.Contracts.Responses;
+using API.Contracts.Types;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Claims.Controllers;
@@ -25,14 +27,13 @@ public class CoversController : ControllerBase
     /// <summary>
     /// Computes the premium for a cover based on the provided dates and cover type.
     /// </summary>
-    /// <param name="startDate">The start date of the cover.</param>
-    /// <param name="endDate">The end date of the cover.</param>
-    /// <param name="coverType">The type of the cover.</param>
+    /// <param name="request">The request containing start date, end date, and cover type.</param>
     /// <returns>The computed premium.</returns>
     [HttpPost("compute")]
-    public ActionResult ComputePremium(DateTime startDate, DateTime endDate, CoverType coverType)
+    public ActionResult<decimal> ComputePremium([FromBody] ComputePremiumRequest request)
     {
-        return Ok(_coverService.ComputePremium(startDate, endDate, coverType));
+        var premium = _coverService.ComputePremium(request.StartDate, request.EndDate, (Domain.Entities.CoverType)(int)request.Type);
+        return Ok(premium);
     }
 
     /// <summary>
@@ -40,10 +41,18 @@ public class CoversController : ControllerBase
     /// </summary>
     /// <returns>A list of all covers.</returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Cover>>> GetAsync()
+    public async Task<ActionResult<IEnumerable<CoverResponse>>> GetAsync()
     {
         var results = await _coverService.GetAll();
-        return Ok(results);
+        var response = results.Select(c => new CoverResponse
+        {
+            Id = c.Id,
+            StartDate = c.StartDate,
+            EndDate = c.EndDate,
+            Type = (CoverType)(int)c.Type,
+            Premium = c.Premium
+        });
+        return Ok(response);
     }
 
     /// <summary>
@@ -52,27 +61,49 @@ public class CoversController : ControllerBase
     /// <param name="id">The identifier of the cover.</param>
     /// <returns>The cover with the specified identifier.</returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<Cover>> GetAsync(string id)
+    public async Task<ActionResult<CoverResponse>> GetAsync(string id)
     {
         var result = await _coverService.GetById(id);
-        return Ok(result);
+        if (result == null)
+            return NotFound();
+        var response = new CoverResponse
+        {
+            Id = result.Id,
+            StartDate = result.StartDate,
+            EndDate = result.EndDate,
+            Type = (CoverType)(int)result.Type,
+            Premium = result.Premium
+        };
+        return Ok(response);
     }
 
     /// <summary>
     /// Creates a new cover asynchronously.
     /// </summary>
-    /// <param name="cover">The cover to create.</param>
+    /// <param name="request">The cover to create.</param>
     /// <returns>The created cover.</returns>
     [HttpPost]
-    public async Task<ActionResult> CreateAsync(Cover cover)
+    public async Task<ActionResult<CoverResponse>> CreateAsync([FromBody] CreateCoverRequest request)
     {
-        cover.Id = Guid.NewGuid().ToString();
+        var cover = new Domain.Entities.Cover
+        {
+            Id = Guid.NewGuid().ToString(),
+            StartDate = request.StartDate,
+            EndDate = request.EndDate,
+            Type = (Domain.Entities.CoverType)(int)request.Type,
+            Premium = request.Premium
+        };
         cover.Premium = _coverService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
-
         _coverService.Create(cover);
-        //_auditService.AuditCover(cover.Id, "POST");
-
-        return Ok(cover);
+        var response = new CoverResponse
+        {
+            Id = cover.Id,
+            StartDate = cover.StartDate,
+            EndDate = cover.EndDate,
+            Type = (CoverType)(int)cover.Type,
+            Premium = cover.Premium
+        };
+        return Ok(response);
     }
 
     /// <summary>
@@ -84,7 +115,6 @@ public class CoversController : ControllerBase
     public async Task<ActionResult> DeleteAsync(string id)
     {
         await _coverService.DeleteById(id);
-        //_auditService.AuditCover(id, "DELETE");
         return NoContent();
     }
 }

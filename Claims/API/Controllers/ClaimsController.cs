@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Domain.Entities;
 using Application.Services;
+using API.Contracts.Requests;
+using API.Contracts.Responses;
+using API.Contracts.Types;
 
 namespace API.Controllers
 {
@@ -27,22 +29,48 @@ namespace API.Controllers
         /// </summary>
         /// <returns>A list of all claims.</returns>
         [HttpGet]
-        public async Task<List<Claim>> GetAsync()
+        public async Task<List<ClaimResponse>> GetAsync()
         {
-            return await _claimService.GetClaimsAsync();
+            var claims = await _claimService.GetClaimsAsync();
+            return claims.Select(c => new ClaimResponse
+            {
+                Id = c.Id,
+                CoverId = c.CoverId,
+                Created = c.Created,
+                Name = c.Name,
+                Type = (ClaimType)(int)c.Type,
+                DamageCost = c.DamageCost
+            }).ToList();
         }
 
         /// <summary>
         /// Creates a new claim asynchronously.
         /// </summary>
-        /// <param name="claim">The claim to create.</param>
+        /// <param name="request">The claim to create.</param>
         /// <returns>The created claim.</returns>
         [HttpPost]
-        public async Task<ActionResult> CreateAsync(Claim claim)
+        public async Task<ActionResult<ClaimResponse>> CreateAsync([FromBody] CreateClaimRequest request)
         {
+            var claim = new Domain.Entities.Claim
+            {
+                Id = Guid.NewGuid().ToString(),
+                CoverId = request.CoverId,
+                Created = request.Created,
+                Name = request.Name,
+                Type = (Domain.Entities.ClaimType)(int)request.Type,
+                DamageCost = request.DamageCost
+            };
             var createdClaim = await _claimService.CreateClaimAsync(claim);
-            //_auditService.AuditClaim(createdClaim.Id, "POST");
-            return Ok(createdClaim);
+            var response = new ClaimResponse
+            {
+                Id = createdClaim.Id,
+                CoverId = createdClaim.CoverId,
+                Created = createdClaim.Created,
+                Name = createdClaim.Name,
+                Type = (ClaimType)(int)createdClaim.Type,
+                DamageCost = createdClaim.DamageCost
+            };
+            return Ok(response);
         }
 
         /// <summary>
@@ -54,9 +82,7 @@ namespace API.Controllers
         public IActionResult DeleteAsync(string id)
         {
             _claimService.DeleteClaimById(id);
-            //_auditService.AuditClaim(id, "DELETE");
             return Ok();
-            
         }
 
         /// <summary>
@@ -65,10 +91,21 @@ namespace API.Controllers
         /// <param name="id">The identifier of the claim.</param>
         /// <returns>The claim with the specified identifier.</returns>
         [HttpGet("{id}")]
-        public async Task<Claim> GetAsync(string id)
+        public async Task<ActionResult<ClaimResponse>> GetAsync(string id)
         {
             var claim = await _claimService.GetClaimByIdAsync(id);
-            return claim;
+            if (claim == null)
+                return NotFound();
+            var response = new ClaimResponse
+            {
+                Id = claim.Id,
+                CoverId = claim.CoverId,
+                Created = claim.Created,
+                Name = claim.Name,
+                Type = (ClaimType)(int)claim.Type,
+                DamageCost = claim.DamageCost
+            };
+            return Ok(response);
         }
     }
 }
