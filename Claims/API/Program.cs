@@ -1,14 +1,18 @@
+using API.HostedServices;
 using Application.Abstractions.Persistence;
 using Application.Claims.CreateClaim;
+using Application.Common.Auditing;
 using Application.Covers.CreateCover;
 using Application.Services;
 using FluentValidation;
+using Infrastructure.Auditing;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
+using System.Threading.Channels;
 using Testcontainers.MongoDb;
 using Testcontainers.MsSql;
 
@@ -29,12 +33,29 @@ var mongoContainer = new MongoDbBuilder()
 await sqlContainer.StartAsync();
 await mongoContainer.StartAsync();
 
+// Channel for in-memory audit buffering
+var auditChannel = Channel.CreateBounded<AuditEvent>(new BoundedChannelOptions(10_000)
+{
+    SingleReader = true,
+    SingleWriter = false,
+    FullMode = BoundedChannelFullMode.Wait
+});
+
+
+builder.Services.AddSingleton(auditChannel);
+
+builder.Services.AddSingleton<IAuditSink, ChannelAuditSink>();
+
+// Register background worker
+builder.Services.AddHostedService<AuditBackgroundService>();
+
 // Add services to the container.
 builder.Services.AddScoped<IClaimRepository, ClaimRepository>();
 builder.Services.AddScoped<ICoverRepository, CoverRepository>();
 builder.Services.AddScoped<IAuditRepository, AuditRepository>();
 builder.Services.AddScoped<IClaimService, ClaimService>();
 builder.Services.AddScoped<ICoverService, CoverService>();
+builder.Services.AddScoped<IAuditService, AuditService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<CreateClaimValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateCoverValidator>();

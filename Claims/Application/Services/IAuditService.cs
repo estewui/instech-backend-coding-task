@@ -1,8 +1,10 @@
-﻿namespace Application.Services
+﻿using Application.Common.Auditing;
+
+namespace Application.Services
 {
     public interface IAuditService
     {
-        void AuditClaim(string id, string httpRequestType);
-        void AuditCover(string id, string httpRequestType);
+        void AuditClaim(AuditEvent auditEvent);
+        void AuditCover(AuditEvent auditEvent);
     }
 }

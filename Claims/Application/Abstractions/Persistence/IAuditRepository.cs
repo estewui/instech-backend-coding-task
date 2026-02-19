@@ -1,4 +1,6 @@
-﻿namespace Application.Abstractions.Persistence
+﻿using Application.Common.Auditing;
+
+namespace Application.Abstractions.Persistence
 {
     /// <summary>
     /// Defines methods for auditing claims and covers.
@@ -8,14 +10,12 @@
         /// <summary>
         /// Audits a claim action.
         /// </summary>
-        /// <param name="id">The claim identifier.</param>
-        /// <param name="httpRequestType">The HTTP request type (e.g., POST, DELETE).</param>
-        void AuditClaim(string id, string httpRequestType);
+        /// <param name="auditEvent">The audit event.</param>
+        void AuditClaim(AuditEvent auditEvent);
         /// <summary>
         /// Audits a cover action.
         /// </summary>
-        /// <param name="id">The cover identifier.</param>
-        /// <param name="httpRequestType">The HTTP request type (e.g., POST, DELETE).</param>
-        void AuditCover(string id, string httpRequestType);
+        /// <param name="auditEvent">The audit event.</param>
+        void AuditCover(AuditEvent auditEvent);
     }
 }

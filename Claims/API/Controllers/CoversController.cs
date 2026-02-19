@@ -1,6 +1,7 @@
 using API.Contracts.Requests;
 using API.Contracts.Responses;
 using API.Contracts.Types;
+using Application.Common.Auditing;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,13 +13,13 @@ public class CoversController : ControllerBase
 {
     private readonly ILogger<CoversController> _logger;
     private readonly ICoverService _coverService;
-    private readonly IAuditService _auditService;
+    private readonly IAuditSink _auditSink;
 
-    public CoversController(ILogger<CoversController> logger, ICoverService coverService, IAuditService auditService)
+    public CoversController(ILogger<CoversController> logger, ICoverService coverService, IAuditSink auditSink)
     {
         _logger = logger;
         _coverService = coverService;
-        _auditService = auditService;
+        _auditSink = auditSink;
     }
 
     /// <summary>
@@ -100,7 +101,13 @@ public class CoversController : ControllerBase
             Type = (CoverType)(int)cover.Type,
             Premium = cover.Premium
         };
-        _auditService.AuditCover(cover.Id, "POST");
+        await _auditSink.EnqueueAsync(new AuditEvent
+        {
+            Type = AuditType.Cover,
+            EntityId = cover.Id,
+            HttpRequestType = "POST",
+            Timestamp = DateTime.UtcNow
+        });
         return Ok(response);
     }
 
@@ -113,7 +120,13 @@ public class CoversController : ControllerBase
     public async Task<ActionResult> DeleteAsync(string id)
     {
         await _coverService.DeleteById(id);
-        _auditService.AuditCover(id, "DELETE");
+        await _auditSink.EnqueueAsync(new AuditEvent
+        {
+            Type = AuditType.Cover,
+            EntityId = id,
+            HttpRequestType = "DELETE",
+            Timestamp = DateTime.UtcNow
+        });
         return NoContent();
     }
 }

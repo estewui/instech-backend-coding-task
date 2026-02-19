@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Persistence;
+using Application.Common.Auditing;
 
 namespace Application.Services
 {
@@ -9,14 +10,14 @@ namespace Application.Services
         {
             _audit = audit;
         }
-        public void AuditClaim(string id, string httpRequestType)
+        public void AuditClaim(AuditEvent auditEvent)
         {
-            _audit.AuditClaim(id, httpRequestType);
+            _audit.AuditClaim(auditEvent);
         }
 
-        public void AuditCover(string id, string httpRequestType)
+        public void AuditCover(AuditEvent auditEvent)
         {
-            _audit.AuditCover(id, httpRequestType);
+            _audit.AuditCover(auditEvent);
         }
     }
 }

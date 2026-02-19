@@ -3,6 +3,7 @@ using Application.Services;
 using API.Contracts.Requests;
 using API.Contracts.Responses;
 using API.Contracts.Types;
+using Application.Common.Auditing;
 
 namespace API.Controllers
 {
@@ -12,13 +13,13 @@ namespace API.Controllers
     {
         private readonly ILogger<ClaimsController> _logger;
         private readonly IClaimService _claimService;
-        private readonly IAuditService _auditService;
+        private readonly IAuditSink _auditSink;
 
-        public ClaimsController(ILogger<ClaimsController> logger, IClaimService claimService, IAuditService auditService)
+        public ClaimsController(ILogger<ClaimsController> logger, IClaimService claimService, IAuditSink auditSink)
         {
             _logger = logger;
             _claimService = claimService;
-            _auditService = auditService;
+            _auditSink = auditSink;
         }
 
         /// <summary>
@@ -67,7 +68,13 @@ namespace API.Controllers
                 Type = (ClaimType)(int)createdClaim.Type,
                 DamageCost = createdClaim.DamageCost
             };
-            _auditService.AuditClaim(createdClaim.Id, "POST");
+            await _auditSink.EnqueueAsync(new AuditEvent
+            {
+                Type = AuditType.Claim,
+                EntityId = createdClaim.Id,
+                HttpRequestType = "POST",
+                Timestamp = DateTime.UtcNow
+            });
             return Ok(response);
         }
 
@@ -77,10 +84,16 @@ namespace API.Controllers
         /// <param name="id">The identifier of the claim to delete.</param>
         /// <returns>Ok if the claim was deleted.</returns>
         [HttpDelete("{id}")]
-        public IActionResult DeleteAsync(string id)
+        public async Task<IActionResult> DeleteAsync(string id)
         {
             _claimService.DeleteClaimById(id);
-            _auditService.AuditClaim(id, "DELETE");
+            await _auditSink.EnqueueAsync(new AuditEvent
+            {
+                Type = AuditType.Claim,
+                EntityId = id,
+                HttpRequestType = "DELETE",
+                Timestamp = DateTime.UtcNow
+            });
             return Ok();
         }
 

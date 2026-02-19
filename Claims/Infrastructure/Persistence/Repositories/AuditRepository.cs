@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Persistence;
+using Application.Common.Auditing;
 using Domain.Entities;
 
 namespace Infrastructure.Persistence.Repositories
@@ -12,26 +13,26 @@ namespace Infrastructure.Persistence.Repositories
             _db = db;
         }
 
-        public void AuditClaim(string id, string httpRequestType)
+        public void AuditClaim(AuditEvent auditEvent)
         {
             var claimAudit = new ClaimAudit()
             {
-                Created = DateTime.Now,
-                HttpRequestType = httpRequestType,
-                ClaimId = id
+                ClaimId = auditEvent.EntityId,
+                Created = auditEvent.Timestamp,
+                HttpRequestType = auditEvent.HttpRequestType
             };
 
             _db.Add(claimAudit);
             _db.SaveChanges();
         }
 
-        public void AuditCover(string id, string httpRequestType)
+        public void AuditCover(AuditEvent auditEvent)
         {
             var coverAudit = new CoverAudit()
             {
-                Created = DateTime.Now,
-                HttpRequestType = httpRequestType,
-                CoverId = id
+                CoverId = auditEvent.EntityId,
+                Created = auditEvent.Timestamp,
+                HttpRequestType = auditEvent.HttpRequestType,
             };
 
             _db.Add(coverAudit);
