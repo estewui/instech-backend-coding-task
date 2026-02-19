@@ -1,10 +1,10 @@
-using Application.Services;
 using API.Contracts.Requests;
 using API.Contracts.Responses;
 using API.Contracts.Types;
+using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Claims.Controllers;
+namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -12,16 +12,13 @@ public class CoversController : ControllerBase
 {
     private readonly ILogger<CoversController> _logger;
     private readonly ICoverService _coverService;
+    private readonly IAuditService _auditService;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CoversController"/> class.
-    /// </summary>
-    /// <param name="logger">The logger instance.</param>
-    /// <param name="coverService">The cover service instance.</param>
-    public CoversController(ILogger<CoversController> logger, ICoverService coverService)
+    public CoversController(ILogger<CoversController> logger, ICoverService coverService, IAuditService auditService)
     {
         _logger = logger;
         _coverService = coverService;
+        _auditService = auditService;
     }
 
     /// <summary>
@@ -103,6 +100,7 @@ public class CoversController : ControllerBase
             Type = (CoverType)(int)cover.Type,
             Premium = cover.Premium
         };
+        _auditService.AuditCover(cover.Id, "POST");
         return Ok(response);
     }
 
@@ -115,6 +113,7 @@ public class CoversController : ControllerBase
     public async Task<ActionResult> DeleteAsync(string id)
     {
         await _coverService.DeleteById(id);
+        _auditService.AuditCover(id, "DELETE");
         return NoContent();
     }
 }

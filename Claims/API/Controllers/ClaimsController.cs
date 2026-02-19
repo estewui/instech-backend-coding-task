@@ -12,16 +12,13 @@ namespace API.Controllers
     {
         private readonly ILogger<ClaimsController> _logger;
         private readonly IClaimService _claimService;
+        private readonly IAuditService _auditService;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ClaimsController"/> class.
-        /// </summary>
-        /// <param name="logger">The logger instance.</param>
-        /// <param name="claimService">The claim service instance.</param>
-        public ClaimsController(ILogger<ClaimsController> logger, IClaimService claimService)
+        public ClaimsController(ILogger<ClaimsController> logger, IClaimService claimService, IAuditService auditService)
         {
             _logger = logger;
             _claimService = claimService;
+            _auditService = auditService;
         }
 
         /// <summary>
@@ -70,6 +67,7 @@ namespace API.Controllers
                 Type = (ClaimType)(int)createdClaim.Type,
                 DamageCost = createdClaim.DamageCost
             };
+            _auditService.AuditClaim(createdClaim.Id, "POST");
             return Ok(response);
         }
 
@@ -82,6 +80,7 @@ namespace API.Controllers
         public IActionResult DeleteAsync(string id)
         {
             _claimService.DeleteClaimById(id);
+            _auditService.AuditClaim(id, "DELETE");
             return Ok();
         }
 
