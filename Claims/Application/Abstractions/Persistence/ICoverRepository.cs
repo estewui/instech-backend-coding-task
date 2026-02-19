@@ -12,7 +12,7 @@ namespace Application.Abstractions.Persistence
         /// </summary>
         /// <param name="cover">The cover to create.</param>
         /// <returns>The created cover.</returns>
-        Cover Create(Cover cover);
+        Task<Cover> Create(Cover cover);
         /// <summary>
         /// Deletes a cover by its identifier asynchronously.
         /// </summary>

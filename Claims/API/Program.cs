@@ -1,5 +1,8 @@
 using Application.Abstractions.Persistence;
+using Application.Claims.CreateClaim;
+using Application.Covers.CreateCover;
 using Application.Services;
+using FluentValidation;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +35,9 @@ builder.Services.AddScoped<ICoverRepository, CoverRepository>();
 builder.Services.AddScoped<IAuditRepository, AuditRepository>();
 builder.Services.AddScoped<IClaimService, ClaimService>();
 builder.Services.AddScoped<ICoverService, CoverService>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateClaimValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateCoverValidator>();
 
 builder.Services
     .AddControllers()

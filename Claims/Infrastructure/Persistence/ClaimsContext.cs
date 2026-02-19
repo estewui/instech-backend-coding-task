@@ -40,6 +40,11 @@ namespace Infrastructure.Persistence
             Claims.Add(item);
             await SaveChangesAsync();
         }
+        public async Task AddCoverAsync(Cover item)
+        {
+            Covers.Add(item);
+            await SaveChangesAsync();
+        }
 
         public async Task DeleteItemAsync(string id)
         {

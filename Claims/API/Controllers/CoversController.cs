@@ -94,7 +94,7 @@ public class CoversController : ControllerBase
             Premium = request.Premium
         };
         cover.Premium = _coverService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
-        _coverService.Create(cover);
+        await _coverService.Create(cover);
         var response = new CoverResponse
         {
             Id = cover.Id,

@@ -1,15 +1,18 @@
 ﻿using Application.Abstractions.Persistence;
 using Domain.Entities;
+using FluentValidation;
 
 namespace Application.Services
 {
-    public class ClaimService: IClaimService
+    public class ClaimService : IClaimService
     {
         private readonly IClaimRepository _claimRepository;
-    
-        public ClaimService(IClaimRepository claimRepository)
+        private readonly IValidator<Claim> _validator;
+
+        public ClaimService(IClaimRepository claimRepository, IValidator<Claim> validator)
         {
             _claimRepository = claimRepository;
+            _validator = validator;
         }
 
         public async Task<Claim> GetClaimByIdAsync(string id)
@@ -24,6 +27,8 @@ namespace Application.Services
 
         public async Task<Claim> CreateClaimAsync(Claim claim)
         {
+            await _validator.ValidateAndThrowAsync(claim);
+
             return await _claimRepository.Create(claim);
         }
 

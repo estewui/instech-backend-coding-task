@@ -24,9 +24,9 @@ namespace Infrastructure.Persistence.Repositories
             return covers.SingleOrDefault(cover => cover.Id == id);
         }
 
-        public Cover Create(Cover cover)
+        public async Task<Cover> Create(Cover cover)
         {
-            _db.Covers.Add(cover);
+            await _db.AddCoverAsync(cover);
             return cover;
         }
 
