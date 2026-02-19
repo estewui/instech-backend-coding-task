@@ -11,18 +11,32 @@ namespace API.Controllers
         private readonly ILogger<ClaimsController> _logger;
         private readonly IClaimService _claimService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ClaimsController"/> class.
+        /// </summary>
+        /// <param name="logger">The logger instance.</param>
+        /// <param name="claimService">The claim service instance.</param>
         public ClaimsController(ILogger<ClaimsController> logger, IClaimService claimService)
         {
             _logger = logger;
             _claimService = claimService;
         }
 
+        /// <summary>
+        /// Retrieves all claims asynchronously.
+        /// </summary>
+        /// <returns>A list of all claims.</returns>
         [HttpGet]
         public async Task<List<Claim>> GetAsync()
         {
             return await _claimService.GetClaimsAsync();
         }
 
+        /// <summary>
+        /// Creates a new claim asynchronously.
+        /// </summary>
+        /// <param name="claim">The claim to create.</param>
+        /// <returns>The created claim.</returns>
         [HttpPost]
         public async Task<ActionResult> CreateAsync(Claim claim)
         {
@@ -31,6 +45,11 @@ namespace API.Controllers
             return Ok(createdClaim);
         }
 
+        /// <summary>
+        /// Deletes a claim by its identifier.
+        /// </summary>
+        /// <param name="id">The identifier of the claim to delete.</param>
+        /// <returns>Ok if the claim was deleted.</returns>
         [HttpDelete("{id}")]
         public IActionResult DeleteAsync(string id)
         {
@@ -40,6 +59,11 @@ namespace API.Controllers
             
         }
 
+        /// <summary>
+        /// Retrieves a claim by its identifier asynchronously.
+        /// </summary>
+        /// <param name="id">The identifier of the claim.</param>
+        /// <returns>The claim with the specified identifier.</returns>
         [HttpGet("{id}")]
         public async Task<Claim> GetAsync(string id)
         {
