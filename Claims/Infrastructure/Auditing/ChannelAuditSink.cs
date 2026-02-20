@@ -1,5 +1,6 @@
-﻿using Application.Common.Auditing;
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
+
+using Application.Common.Auditing;
 
 namespace Infrastructure.Auditing
 {

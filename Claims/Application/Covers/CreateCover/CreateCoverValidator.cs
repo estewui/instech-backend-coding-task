@@ -1,5 +1,6 @@
-﻿using Domain.Entities;
-using FluentValidation;
+﻿using FluentValidation;
+
+using Domain.Entities;
 
 
 namespace Application.Covers.CreateCover

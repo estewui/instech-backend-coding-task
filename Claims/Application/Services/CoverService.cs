@@ -1,7 +1,9 @@
-﻿using Application.Abstractions.Persistence;
+﻿using FluentValidation;
+
+using Application.Abstractions.Persistence;
 using Domain.Entities;
 using Domain.Services;
-using FluentValidation;
+
 namespace Application.Services
 {
     public class CoverService: ICoverService

@@ -1,6 +1,8 @@
-﻿using Application.Abstractions.Persistence;
+﻿using Microsoft.EntityFrameworkCore;
+
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+
+using Application.Abstractions.Persistence;
 using DomainEntities = Domain.Entities;
 using MongoModels = Infrastructure.Persistence.Mongo.Models;
 

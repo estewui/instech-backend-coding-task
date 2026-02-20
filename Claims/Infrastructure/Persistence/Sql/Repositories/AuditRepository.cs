@@ -1,6 +1,7 @@
-﻿using Application.Abstractions.Persistence;
+﻿using AutoMapper;
+
+using Application.Abstractions.Persistence;
 using Application.Common.Auditing;
-using AutoMapper;
 using SqlModels = Infrastructure.Persistence.Sql.Models;
 
 namespace Infrastructure.Persistence.Sql.Repositories

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using Infrastructure.Persistence.Sql.Models;
 
 namespace Infrastructure.Persistence

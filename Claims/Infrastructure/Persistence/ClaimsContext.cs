@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using MongoDB.EntityFrameworkCore.Extensions;
+
 using Infrastructure.Persistence.Mongo.Models;
 
 namespace Infrastructure.Persistence

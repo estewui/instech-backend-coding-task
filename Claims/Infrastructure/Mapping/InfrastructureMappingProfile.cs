@@ -1,4 +1,5 @@
 using AutoMapper;
+
 using DomainEntities = Domain.Entities;
 using MongoModels = Infrastructure.Persistence.Mongo.Models;
 using SqlModels = Infrastructure.Persistence.Sql.Models;

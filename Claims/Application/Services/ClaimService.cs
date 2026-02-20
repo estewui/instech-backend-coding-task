@@ -1,6 +1,7 @@
-﻿using Application.Abstractions.Persistence;
+﻿using FluentValidation;
+
+using Application.Abstractions.Persistence;
 using Domain.Entities;
-using FluentValidation;
 
 namespace Application.Services
 {
