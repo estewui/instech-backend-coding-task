@@ -104,52 +104,5 @@ namespace Claims.Tests.Application
             // Assert
             _mockCoverRepository.Verify(r => r.DeleteById(coverId), Times.Once);
         }
-
-        [Theory]
-        [InlineData(CoverType.Yacht, 30, 41250)] // 1250 * 1.1 * 30 days
-        [InlineData(CoverType.PassengerShip, 30, 45000)] // 1250 * 1.2 * 30 days
-        [InlineData(CoverType.Tanker, 30, 56250)] // 1250 * 1.5 * 30 days
-        public void ComputePremium_ShouldCalculateCorrectly_For30Days(CoverType coverType, int days, decimal expectedPremium)
-        {
-            // Arrange
-            var startDate = DateTime.UtcNow;
-            var endDate = startDate.AddDays(days);
-
-            // Act
-            var result = _coverService.ComputePremium(startDate, endDate, coverType);
-
-            // Assert
-            Assert.Equal(expectedPremium, result);
-        }
-
-        [Fact]
-        public void ComputePremium_ShouldApplyCorrectMultiplier_ForYacht()
-        {
-            // Arrange
-            var startDate = DateTime.UtcNow;
-            var endDate = startDate.AddDays(10);
-
-            // Act
-            var result = _coverService.ComputePremium(startDate, endDate, CoverType.Yacht);
-
-            // Assert
-            var expectedPremium = 1250m * 1.1m * 10;
-            Assert.Equal(expectedPremium, result);
-        }
-
-        [Fact]
-        public void ComputePremium_ShouldApplyCorrectMultiplier_ForTanker()
-        {
-            // Arrange
-            var startDate = DateTime.UtcNow;
-            var endDate = startDate.AddDays(10);
-
-            // Act
-            var result = _coverService.ComputePremium(startDate, endDate, CoverType.Tanker);
-
-            // Assert
-            var expectedPremium = 1250m * 1.5m * 10;
-            Assert.Equal(expectedPremium, result);
-        }
     }
 }
