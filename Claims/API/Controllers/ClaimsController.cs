@@ -32,10 +32,18 @@ namespace API.Controllers
         /// </summary>
         /// <returns>A list of all claims.</returns>
         [HttpGet]
-        public async Task<List<ClaimResponse>> GetAsync()
+        public async Task<ActionResult<List<ClaimResponse>>> GetAsync()
         {
-            var claims = await _claimService.GetClaimsAsync();
-            return _mapper.Map<List<ClaimResponse>>(claims);
+            try
+            {
+                var claims = await _claimService.GetClaimsAsync();
+                return _mapper.Map<List<ClaimResponse>>(claims);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting claims");
+                return StatusCode(500, "An error occurred while getting claims.");
+            }
         }
 
         /// <summary>
@@ -46,21 +54,34 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<ClaimResponse>> CreateAsync([FromBody] CreateClaimRequest request)
         {
-            var claim = _mapper.Map<Claim>(request);
-            claim.Id = Guid.NewGuid().ToString();
-            
-            var createdClaim = await _claimService.CreateClaimAsync(claim);
-            var response = _mapper.Map<ClaimResponse>(createdClaim);
-            
-            await _auditSink.EnqueueAsync(new AuditEvent
+            try
             {
-                Type = AuditType.Claim,
-                EntityId = createdClaim.Id,
-                HttpRequestType = "POST",
-                Timestamp = DateTime.UtcNow
-            });
+                var claim = _mapper.Map<Claim>(request);
+                claim.Id = Guid.NewGuid().ToString();
             
-            return Ok(response);
+                var createdClaim = await _claimService.CreateClaimAsync(claim);
+                var response = _mapper.Map<ClaimResponse>(createdClaim);
+            
+                await _auditSink.EnqueueAsync(new AuditEvent
+                {
+                    Type = AuditType.Claim,
+                    EntityId = createdClaim.Id,
+                    HttpRequestType = "POST",
+                    Timestamp = DateTime.UtcNow
+                });
+            
+                return Ok(response);
+            }
+            catch (FluentValidation.ValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation failed for claim creation");
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating claim");
+                return StatusCode(500, "An error occurred while creating the claim.");
+            }
         }
 
         /// <summary>
@@ -71,15 +92,23 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(string id)
         {
-            _claimService.DeleteClaimById(id);
-            await _auditSink.EnqueueAsync(new AuditEvent
+            try
             {
-                Type = AuditType.Claim,
-                EntityId = id,
-                HttpRequestType = "DELETE",
-                Timestamp = DateTime.UtcNow
-            });
-            return Ok();
+                _claimService.DeleteClaimById(id);
+                await _auditSink.EnqueueAsync(new AuditEvent
+                {
+                    Type = AuditType.Claim,
+                    EntityId = id,
+                    HttpRequestType = "DELETE",
+                    Timestamp = DateTime.UtcNow
+                });
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting claim");
+                return StatusCode(500, "An error occurred while deleting the claim.");
+            }
         }
 
         /// <summary>
@@ -90,12 +119,20 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ClaimResponse>> GetAsync(string id)
         {
-            var claim = await _claimService.GetClaimByIdAsync(id);
-            if (claim == null)
-                return NotFound();
+            try
+            {
+                var claim = await _claimService.GetClaimByIdAsync(id);
+                if (claim == null)
+                    return NotFound();
             
-            var response = _mapper.Map<ClaimResponse>(claim);
-            return Ok(response);
+                var response = _mapper.Map<ClaimResponse>(claim);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting claim");
+                return StatusCode(500, "An error occurred while getting the claim.");
+            }
         }
     }
 }

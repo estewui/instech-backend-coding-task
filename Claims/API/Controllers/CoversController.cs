@@ -35,8 +35,16 @@ public class CoversController : ControllerBase
     [HttpPost("compute")]
     public ActionResult<decimal> ComputePremium([FromBody] ComputePremiumRequest request)
     {
-        var premium = _coverService.ComputePremium(request.StartDate, request.EndDate, (Domain.Entities.CoverType)(int)request.Type);
-        return Ok(premium);
+        try
+        {
+            var premium = _coverService.ComputePremium(request.StartDate, request.EndDate, (Domain.Entities.CoverType)(int)request.Type);
+            return Ok(premium);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error computing premium");
+            return StatusCode(500, "An error occurred while computing the premium.");
+        }
     }
 
     /// <summary>
@@ -46,9 +54,17 @@ public class CoversController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CoverResponse>>> GetAsync()
     {
-        var results = await _coverService.GetAll();
-        var response = _mapper.Map<IEnumerable<CoverResponse>>(results);
-        return Ok(response);
+        try
+        {
+            var results = await _coverService.GetAll();
+            var response = _mapper.Map<IEnumerable<CoverResponse>>(results);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting covers");
+            return StatusCode(500, "An error occurred while getting the covers.");
+        }
     }
 
     /// <summary>
@@ -59,12 +75,20 @@ public class CoversController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<CoverResponse>> GetAsync(string id)
     {
-        var result = await _coverService.GetById(id);
-        if (result == null)
-            return NotFound();
+        try
+        {
+            var result = await _coverService.GetById(id);
+            if (result == null)
+                return NotFound();
         
-        var response = _mapper.Map<CoverResponse>(result);
-        return Ok(response);
+            var response = _mapper.Map<CoverResponse>(result);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting cover");
+            return StatusCode(500, "An error occurred while getting the cover.");
+        }
     }
 
     /// <summary>
@@ -75,22 +99,35 @@ public class CoversController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CoverResponse>> CreateAsync([FromBody] CreateCoverRequest request)
     {
-        var cover = _mapper.Map<Cover>(request);
-        cover.Id = Guid.NewGuid().ToString();
-        cover.Premium = _coverService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
-        
-        await _coverService.Create(cover);
-        var response = _mapper.Map<CoverResponse>(cover);
-        
-        await _auditSink.EnqueueAsync(new AuditEvent
+        try
         {
-            Type = AuditType.Cover,
-            EntityId = cover.Id,
-            HttpRequestType = "POST",
-            Timestamp = DateTime.UtcNow
-        });
+            var cover = _mapper.Map<Cover>(request);
+            cover.Id = Guid.NewGuid().ToString();
+            cover.Premium = _coverService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
         
-        return Ok(response);
+            await _coverService.Create(cover);
+            var response = _mapper.Map<CoverResponse>(cover);
+        
+            await _auditSink.EnqueueAsync(new AuditEvent
+            {
+                Type = AuditType.Cover,
+                EntityId = cover.Id,
+                HttpRequestType = "POST",
+                Timestamp = DateTime.UtcNow
+            });
+        
+            return Ok(response);
+        }
+        catch (FluentValidation.ValidationException ex)
+        {
+            _logger.LogWarning(ex, "Validation failed for cover creation");
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating cover");
+            return StatusCode(500, "An error occurred while creating the cover.");
+        }
     }
 
     /// <summary>
@@ -101,14 +138,22 @@ public class CoversController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAsync(string id)
     {
-        await _coverService.DeleteById(id);
-        await _auditSink.EnqueueAsync(new AuditEvent
+        try
         {
-            Type = AuditType.Cover,
-            EntityId = id,
-            HttpRequestType = "DELETE",
-            Timestamp = DateTime.UtcNow
-        });
-        return NoContent();
+            await _coverService.DeleteById(id);
+            await _auditSink.EnqueueAsync(new AuditEvent
+            {
+                Type = AuditType.Cover,
+                EntityId = id,
+                HttpRequestType = "DELETE",
+                Timestamp = DateTime.UtcNow
+            });
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting cover");
+            return StatusCode(500, "An error occurred while deleting the cover.");
+        }
     }
 }
