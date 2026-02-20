@@ -15,7 +15,7 @@ Date: 2026/02/20
 5. New browser window with Swagger will open up. You can test API there. 
 
 # Tests
-1. Right-click on Claims.Tests project.
+1. On the navigation bar on the right, right-click on Claims.Tests project.
 2. Click *Run Tests*
 
 # Note
