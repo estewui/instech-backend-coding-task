@@ -18,7 +18,7 @@ namespace Application.Covers.CreateCover
                 .WithMessage("Start date cannot be in the past.");
 
             RuleFor(x => x)
-                .Must(x => x.EndDate.Subtract(x.StartDate).TotalDays <= 365)
+                .Must(x => x.EndDate.Subtract(x.StartDate).TotalDays < 366)
                 .WithMessage("Total insurance period cannot exceed 1 year");
         }
     }

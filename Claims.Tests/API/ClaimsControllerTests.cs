@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -50,9 +55,10 @@ namespace Claims.Tests.API
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(2, result.Count);
-            Assert.Equal("Claim 1", result[0].Name);
-            Assert.Equal("Claim 2", result[1].Name);
+            Assert.NotNull(result.Value);
+            Assert.Equal(2, result.Value.Count);
+            Assert.Equal("Claim 1", result.Value[0].Name);
+            Assert.Equal("Claim 2", result.Value[1].Name);
         }
 
         [Fact]
