@@ -1,5 +1,6 @@
-﻿using Domain.Entities;
-using Xunit;
+﻿using Xunit;
+
+using Domain.Entities;
 using Premium = Domain.Services.PremiumCalculator;
 
 namespace Claims.Tests.Domain

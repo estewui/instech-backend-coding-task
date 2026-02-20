@@ -1,12 +1,12 @@
-using Application.Common.Auditing;
+using Microsoft.EntityFrameworkCore;
+
 using AutoMapper;
-using Domain.Entities;
+using Moq;
+using Xunit;
+
+using Application.Common.Auditing;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Sql.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using System.Security.Claims;
-using Xunit;
 
 namespace Claims.Tests.Infrastructure
 {

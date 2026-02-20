@@ -1,12 +1,10 @@
-using Application.Services;
-using Application.Abstractions.Persistence;
-using Domain.Entities;
+using FluentValidation;
 using Moq;
 using Xunit;
-using FluentValidation;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System;
+
+using Application.Abstractions.Persistence;
+using Application.Services;
+using Domain.Entities;
 
 namespace Claims.Tests.Application
 {

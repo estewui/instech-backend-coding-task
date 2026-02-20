@@ -1,4 +1,5 @@
 using AutoMapper;
+
 using API.Contracts.Requests;
 using API.Contracts.Responses;
 using Domain.Entities;

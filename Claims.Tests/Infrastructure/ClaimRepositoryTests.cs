@@ -1,12 +1,14 @@
-using API.Mapping;
+using Microsoft.EntityFrameworkCore;
+
 using AutoMapper;
+using Moq;
+using Xunit;
+
+using API.Mapping;
 using Domain.Entities;
 using Infrastructure.Mapping;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Mongo.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using Xunit;
 
 namespace Claims.Tests.Infrastructure
 {

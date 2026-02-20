@@ -1,17 +1,18 @@
-using API.Controllers;
-using API.Contracts.Requests;
-using API.Contracts.Responses;
-using APIContractTypes = API.Contracts.Types;
-using Application.Services;
-using Application.Common.Auditing;
-using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+
+using AutoMapper;
 using Moq;
 using Xunit;
-using AutoMapper;
-using MappingProfile = API.Mapping.MappingProfile;
 
+using API.Contracts.Requests;
+using API.Contracts.Responses;
+using API.Controllers;
+using API.Mapping;
+using APIContractTypes = API.Contracts.Types;
+using Application.Common.Auditing;
+using Application.Services;
+using Domain.Entities;
 
 namespace Claims.Tests.API
 {

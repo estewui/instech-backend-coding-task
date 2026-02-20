@@ -1,6 +1,7 @@
-﻿using Application.Common.Auditing;
+﻿using System.Threading.Channels;
+
+using Application.Common.Auditing;
 using Application.Services;
-using System.Threading.Channels;
 
 namespace API.HostedServices
 {

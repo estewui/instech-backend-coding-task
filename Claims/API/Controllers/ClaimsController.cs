@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using Application.Services;
+
+using AutoMapper;
+
 using API.Contracts.Requests;
 using API.Contracts.Responses;
 using Application.Common.Auditing;
-using AutoMapper;
+using Application.Services;
 using Domain.Entities;
 
 namespace API.Controllers
