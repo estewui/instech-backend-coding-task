@@ -16,36 +16,43 @@ namespace Application.Services
             _validator = validator;
         }
 
+        public const decimal BASE_DAY_RATE = 1250m;
+        public const decimal DEFAULT_MULTIPLIER = 1.3m;
+        public const decimal DEFAULT_AFTER_30_BEFORE_180_DAYS_MULTIPLIER = 0.98m;
+        public const decimal DEFAULT_AFTER_150_DAYS_MULTIPLIER = 0.99m;
+
+        public class CoverMultiplier
+        {
+            public decimal BaseDayRate { get; set; } = BASE_DAY_RATE;
+            public decimal BaseMultiplier { get; set; } = DEFAULT_MULTIPLIER;
+            public decimal After30Before180DaysMultiplier { get; set; } = DEFAULT_AFTER_30_BEFORE_180_DAYS_MULTIPLIER;
+            public decimal After150DaysMultiplier { get; set; } = DEFAULT_AFTER_150_DAYS_MULTIPLIER;
+        }
+
+        public static CoverMultiplier DEFAULT_COVER_MULTIPLIER = new CoverMultiplier();
+
+        public static Dictionary<CoverType, CoverMultiplier> MULTIPLIERS = new Dictionary<CoverType, CoverMultiplier>
+            {
+                { CoverType.Yacht, new CoverMultiplier { BaseMultiplier = 1.1m, After30Before180DaysMultiplier = 0.95m, After150DaysMultiplier = 0.97m } },
+                { CoverType.PassengerShip, new CoverMultiplier { BaseMultiplier = 1.2m } },
+                { CoverType.ContainerShip, new CoverMultiplier() },
+                { CoverType.BulkCarrier, new CoverMultiplier() },
+                { CoverType.Tanker, new CoverMultiplier { BaseMultiplier = 1.5m } }
+            };
+
+
         public decimal ComputePremium(DateTime startDate, DateTime endDate, CoverType coverType)
         {
-            var multiplier = 1.3m;
-            if (coverType == CoverType.Yacht)
-            {
-                multiplier = 1.1m;
-            }
+            var coverMultiplier = MULTIPLIERS.TryGetValue(coverType, out CoverMultiplier multiplier) ? multiplier : DEFAULT_COVER_MULTIPLIER;
+            var totalDays = (int)Math.Ceiling((endDate - startDate).TotalDays);
 
-            if (coverType == CoverType.PassengerShip)
-            {
-                multiplier = 1.2m;
-            }
+            var totalDays1stPeriod = Math.Max(Math.Min(totalDays, 30), 0); // total days between day 0 and day 30, sets 0 if value is negative
+            var totalDays2ndPeriod = Math.Max(Math.Min(totalDays - 30, 150), 0); // total days between day 30 and day 180 (150 days after day 30), sets 0 if value is negative
+            var totalDays3rdPeriod = Math.Max(totalDays - 180, 0); // remaining total days after day 180, sets 0 if value is negative
 
-            if (coverType == CoverType.Tanker)
-            {
-                multiplier = 1.5m;
-            }
-
-            var premiumPerDay = 1250 * multiplier;
-            var insuranceLength = (endDate - startDate).TotalDays;
-            var totalPremium = 0m;
-
-            for (var i = 0; i < insuranceLength; i++)
-            {
-                if (i < 30) totalPremium += premiumPerDay;
-                if (i < 180 && coverType == CoverType.Yacht) totalPremium += premiumPerDay - premiumPerDay * 0.05m;
-                else if (i < 180) totalPremium += premiumPerDay - premiumPerDay * 0.02m;
-                if (i < 365 && coverType != CoverType.Yacht) totalPremium += premiumPerDay - premiumPerDay * 0.03m;
-                else if (i < 365) totalPremium += premiumPerDay - premiumPerDay * 0.08m;
-            }
+            var totalPremium = totalDays1stPeriod * coverMultiplier.BaseDayRate * coverMultiplier.BaseMultiplier
+                             + totalDays2ndPeriod * coverMultiplier.BaseDayRate * coverMultiplier.After30Before180DaysMultiplier
+                             + totalDays3rdPeriod * coverMultiplier.BaseDayRate * coverMultiplier.After150DaysMultiplier;
 
             return totalPremium;
         }
