@@ -22,8 +22,8 @@ namespace Application.Services
         /// Retrieves a claim by its identifier asynchronously.
         /// </summary>
         /// <param name="id">The identifier of the claim.</param>
-        /// <returns>The claim with the specified identifier.</returns>
-        Task<Claim> GetClaimByIdAsync(string id);
+        /// <returns>The claim with the specified identifier, or null if not found.</returns>
+        Task<Claim?> GetClaimByIdAsync(string id);
         /// <summary>
         /// Retrieves all claims asynchronously.
         /// </summary>

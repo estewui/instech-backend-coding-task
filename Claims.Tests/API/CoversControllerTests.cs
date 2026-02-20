@@ -82,7 +82,7 @@ namespace Claims.Tests.API
         {
             // Arrange
             var coverId = "non-existent";
-            _mockCoverService.Setup(s => s.GetById(coverId)).ReturnsAsync((Cover)null);
+            _mockCoverService.Setup(s => s.GetById(coverId)).ReturnsAsync((Cover?)null);
 
             // Act
             var result = await _controller.GetAsync(coverId);

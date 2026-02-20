@@ -36,7 +36,7 @@ namespace Application.Services
         /// Retrieves a cover by its identifier asynchronously.
         /// </summary>
         /// <param name="id">The identifier of the cover.</param>
-        /// <returns>The cover with the specified identifier.</returns>
-        Task<Cover> GetById(string id);
+        /// <returns>The cover with the specified identifier, or null if not found.</returns>
+        Task<Cover?> GetById(string id);
     }
 }

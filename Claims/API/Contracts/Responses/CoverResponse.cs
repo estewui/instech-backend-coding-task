@@ -5,7 +5,7 @@ namespace API.Contracts.Responses
     /// </summary>
     public class CoverResponse
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public API.Contracts.Types.CoverType Type { get; set; }

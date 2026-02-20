@@ -4,10 +4,10 @@ namespace Domain.Services
 {
     public class CoverMultiplier
     {
-        private static decimal BASE_DAY_RATE = 1250m;
-        private static decimal DEFAULT_MULTIPLIER = 1.3m;
-        private static decimal DEFAULT_AFTER_30_BEFORE_180_DAYS_DISCOUNT = 0.02m;
-        private static decimal DEFAULT_AFTER_150_DAYS_ADDITIONAL_DISCOUNT = 0.01m;
+        private static readonly decimal BASE_DAY_RATE = 1250m;
+        private static readonly decimal DEFAULT_MULTIPLIER = 1.3m;
+        private static readonly decimal DEFAULT_AFTER_30_BEFORE_180_DAYS_DISCOUNT = 0.02m;
+        private static readonly decimal DEFAULT_AFTER_150_DAYS_ADDITIONAL_DISCOUNT = 0.01m;
 
         public decimal BaseDayRate { get; set; } = BASE_DAY_RATE;
         public decimal BaseMultiplier { get; set; } = DEFAULT_MULTIPLIER;
@@ -17,9 +17,9 @@ namespace Domain.Services
     
     public static class PremiumCalculator
     {
-        private static CoverMultiplier DEFAULT_COVER_MULTIPLIER = new CoverMultiplier();
+        private static readonly CoverMultiplier DEFAULT_COVER_MULTIPLIER = new CoverMultiplier();
 
-        private static Dictionary<CoverType, CoverMultiplier> MULTIPLIERS = new Dictionary<CoverType, CoverMultiplier>
+        private static readonly Dictionary<CoverType, CoverMultiplier> MULTIPLIERS = new Dictionary<CoverType, CoverMultiplier>
             {
                 { CoverType.Yacht, new CoverMultiplier { BaseMultiplier = 1.1m, After30Before180DaysDiscount = 0.05m, After150DaysDiscount = 0.03m } },
                 { CoverType.PassengerShip, new CoverMultiplier { BaseMultiplier = 1.2m } },
@@ -38,7 +38,7 @@ namespace Domain.Services
         */
         public static decimal ComputePremium(DateTime startDate, DateTime endDate, CoverType coverType)
         {
-            var coverMultiplier = MULTIPLIERS.TryGetValue(coverType, out CoverMultiplier multiplier) ? multiplier : DEFAULT_COVER_MULTIPLIER;
+            var coverMultiplier = MULTIPLIERS.TryGetValue(coverType, out CoverMultiplier? multiplier) ? multiplier : DEFAULT_COVER_MULTIPLIER;
             var totalDays = (int)Math.Ceiling((endDate - startDate).TotalDays);
 
             var totalDays1stPeriod = Math.Max(Math.Min(totalDays, 30), 0); // total days between day 0 and day 30, sets 0 if value is negative

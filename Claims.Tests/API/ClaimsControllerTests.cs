@@ -85,7 +85,7 @@ namespace Claims.Tests.API
         {
             // Arrange
             var claimId = "non-existent";
-            _mockClaimService.Setup(s => s.GetClaimByIdAsync(claimId)).ReturnsAsync((Claim)null);
+            _mockClaimService.Setup(s => s.GetClaimByIdAsync(claimId)).ReturnsAsync((Claim?)null);
 
             // Act
             var result = await _controller.GetAsync(claimId);

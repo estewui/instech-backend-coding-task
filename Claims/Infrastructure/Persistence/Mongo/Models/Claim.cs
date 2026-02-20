@@ -5,7 +5,7 @@ namespace Infrastructure.Persistence.Mongo.Models
     public class Claim
     {
         [BsonId]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [BsonElement("coverId")]
         public string CoverId { get; set; } = string.Empty;

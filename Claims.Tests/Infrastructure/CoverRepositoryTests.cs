@@ -62,8 +62,8 @@ namespace Claims.Tests.Infrastructure
                 Type = CoverType.PassengerShip,
                 Premium = 8000m
             };
-            _repository.Create(cover);
-            await _context.SaveChangesAsync();
+            await _repository.Create(cover);
+            await _context.SaveChangesAsync(CancellationToken.None);
 
             // Act
             var result = await _repository.GetById(cover.Id);
@@ -93,9 +93,9 @@ namespace Claims.Tests.Infrastructure
             // Arrange
             var cover1 = new Cover { Id = Guid.NewGuid().ToString(), StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(30), Type = CoverType.Yacht, Premium = 1000m };
             var cover2 = new Cover { Id = Guid.NewGuid().ToString(), StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(60), Type = CoverType.Tanker, Premium = 2000m };
-            _repository.Create(cover1);
-            _repository.Create(cover2);
-            await _context.SaveChangesAsync();
+            await _repository.Create(cover1);
+            await _repository.Create(cover2);
+            await _context.SaveChangesAsync(CancellationToken.None);
 
             // Act
             var result = await _repository.GetAll();
@@ -117,8 +117,8 @@ namespace Claims.Tests.Infrastructure
                 Type = CoverType.ContainerShip,
                 Premium = 6000m
             };
-            _repository.Create(cover);
-            await _context.SaveChangesAsync();
+            await _repository.Create(cover);
+            await _context.SaveChangesAsync(CancellationToken.None);
 
             // Act
             await _repository.DeleteById(cover.Id);

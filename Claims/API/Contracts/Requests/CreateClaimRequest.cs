@@ -5,9 +5,9 @@ namespace API.Contracts.Requests
     /// </summary>
     public class CreateClaimRequest
     {
-        public string CoverId { get; set; }
+        public string CoverId { get; set; } = string.Empty;
         public DateTime Created { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public API.Contracts.Types.ClaimType Type { get; set; }
         public decimal DamageCost { get; set; }
     }

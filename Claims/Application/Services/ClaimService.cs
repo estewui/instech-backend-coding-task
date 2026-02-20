@@ -15,7 +15,7 @@ namespace Application.Services
             _validator = validator;
         }
 
-        public async Task<Claim> GetClaimByIdAsync(string id)
+        public async Task<Claim?> GetClaimByIdAsync(string id)
         {
             return await _claimRepository.GetById(id);
         }

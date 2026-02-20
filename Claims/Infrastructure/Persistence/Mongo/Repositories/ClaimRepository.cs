@@ -22,10 +22,10 @@ namespace Infrastructure.Persistence.Mongo.Repositories
             return _mapper.Map<List<DomainEntities.Claim>>(mongoClaims.ToList());
         }
 
-        public async Task<DomainEntities.Claim> GetById(string id)
+        public async Task<DomainEntities.Claim?> GetById(string id)
         {
             var mongoClaim = await _db.GetClaimAsync(id);
-            return _mapper.Map<DomainEntities.Claim>(mongoClaim);
+            return _mapper.Map<DomainEntities.Claim?>(mongoClaim);
         }
 
         public async Task<DomainEntities.Claim> Create(DomainEntities.Claim claim)

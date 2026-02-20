@@ -28,7 +28,7 @@ namespace Application.Abstractions.Persistence
         /// Retrieves a claim by its identifier asynchronously.
         /// </summary>
         /// <param name="id">The identifier of the claim.</param>
-        /// <returns>The claim with the specified identifier.</returns>
-        Task<Claim> GetById(string id);
+        /// <returns>The claim with the specified identifier, or null if not found.</returns>
+        Task<Claim?> GetById(string id);
     }
 }

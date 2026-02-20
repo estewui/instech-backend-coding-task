@@ -23,7 +23,7 @@ namespace Infrastructure.Persistence.Mongo.Repositories
             return _mapper.Map<List<DomainEntities.Cover>>(mongoCovers);
         }
 
-        public async Task<DomainEntities.Cover> GetById(string id)
+        public async Task<DomainEntities.Cover?> GetById(string id)
         {
             var mongoCovers = await GetAll();
             return mongoCovers.SingleOrDefault(cover => cover.Id == id);

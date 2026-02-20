@@ -20,7 +20,7 @@ namespace Application.Services
             return PremiumCalculator.ComputePremium(startDate, endDate, coverType);
         }
 
-        public Task<Cover> GetById(string id)
+        public Task<Cover?> GetById(string id)
         {
             return _coverRepository.GetById(id);
         }
