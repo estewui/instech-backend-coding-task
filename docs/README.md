@@ -1,7 +1,8 @@
 # Description
 This project is a backend coding task realised by me as part of my application to InsuranceTechnologySolutions.
-Author: Stanislaw Teczynski
-Date: 2026/02/20
+**Author**: Stanislaw Teczynski
+
+**Date**: 2026/02/20
 
 # Prerequisites
 - Visual Studio, minimal version v17.12
