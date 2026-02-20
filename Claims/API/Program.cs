@@ -7,7 +7,8 @@ using Application.Services;
 using FluentValidation;
 using Infrastructure.Auditing;
 using Infrastructure.Persistence;
-using Infrastructure.Persistence.Repositories;
+using Infrastructure.Persistence.Mongo.Repositories;
+using Infrastructure.Persistence.Sql.Repositories;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using System.Runtime.InteropServices;
@@ -49,7 +50,7 @@ builder.Services.AddSingleton<IAuditSink, ChannelAuditSink>();
 // Register background worker
 builder.Services.AddHostedService<AuditBackgroundService>();
 
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(ClaimRepository).Assembly);
 
 // Add services to the container.
 builder.Services.AddScoped<IClaimRepository, ClaimRepository>();

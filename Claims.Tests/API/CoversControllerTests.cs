@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
+using AutoMapper;
 
 namespace Claims.Tests.API
 {
@@ -20,6 +21,7 @@ namespace Claims.Tests.API
         private readonly Mock<ILogger<CoversController>> _mockLogger;
         private readonly Mock<ICoverService> _mockCoverService;
         private readonly Mock<IAuditSink> _mockAuditSink;
+        private readonly Mock<IMapper> _mockMapper;
         private readonly CoversController _controller;
 
         public CoversControllerTests()
@@ -27,7 +29,8 @@ namespace Claims.Tests.API
             _mockLogger = new Mock<ILogger<CoversController>>();
             _mockCoverService = new Mock<ICoverService>();
             _mockAuditSink = new Mock<IAuditSink>();
-            _controller = new CoversController(_mockLogger.Object, _mockCoverService.Object, _mockAuditSink.Object);
+            _mockMapper = new Mock<IMapper>();
+            _controller = new CoversController(_mockLogger.Object, _mockCoverService.Object, _mockAuditSink.Object, _mockMapper.Object);
         }
 
         [Fact]

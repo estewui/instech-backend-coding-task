@@ -1,8 +1,8 @@
-using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
+using Infrastructure.Persistence.Mongo.Repositories;
 
 namespace Claims.Tests.Infrastructure
 {

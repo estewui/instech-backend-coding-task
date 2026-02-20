@@ -17,13 +17,6 @@ public class CoversController : ControllerBase
     private readonly IAuditSink _auditSink;
     private readonly IMapper _mapper;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CoversController"/> class.
-    /// </summary>
-    /// <param name="logger">The logger instance.</param>
-    /// <param name="coverService">The cover service instance.</param>
-    /// <param name="auditSink">The audit sink instance.</param>
-    /// <param name="mapper">The AutoMapper instance.</param>
     public CoversController(ILogger<CoversController> logger, ICoverService coverService, IAuditSink auditSink, IMapper mapper)
     {
         _logger = logger;

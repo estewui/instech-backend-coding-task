@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MongoDB.EntityFrameworkCore.Extensions;
-using Domain.Entities;
+using Infrastructure.Persistence.Mongo.Models;
 
 namespace Infrastructure.Persistence
 {

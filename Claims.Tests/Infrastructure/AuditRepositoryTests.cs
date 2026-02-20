@@ -1,7 +1,7 @@
 using Application.Common.Auditing;
 using Domain.Entities;
 using Infrastructure.Persistence;
-using Infrastructure.Persistence.Repositories;
+using Infrastructure.Persistence.Sql.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Xunit;
