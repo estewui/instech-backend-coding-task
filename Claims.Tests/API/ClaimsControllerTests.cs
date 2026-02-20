@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
+using AutoMapper;
+using MappingProfile = API.Mapping.MappingProfile;
+
 
 namespace Claims.Tests.API
 {
@@ -27,7 +30,7 @@ namespace Claims.Tests.API
             _mockLogger = new Mock<ILogger<ClaimsController>>();
             _mockClaimService = new Mock<IClaimService>();
             _mockAuditSink = new Mock<IAuditSink>();
-            _controller = new ClaimsController(_mockLogger.Object, _mockClaimService.Object, _mockAuditSink.Object);
+            _controller = new ClaimsController(_mockLogger.Object, _mockClaimService.Object, _mockAuditSink.Object, CreateMapper());
         }
 
         [Fact]
@@ -136,6 +139,12 @@ namespace Claims.Tests.API
             // Assert
             Assert.IsType<OkResult>(result);
             _mockClaimService.Verify(s => s.DeleteClaimById(claimId), Times.Once);
+        }
+
+        private static IMapper CreateMapper()
+        {
+            var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+            return config.CreateMapper();
         }
     }
 }

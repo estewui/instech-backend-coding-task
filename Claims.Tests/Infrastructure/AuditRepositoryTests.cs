@@ -1,8 +1,10 @@
 using Application.Common.Auditing;
+using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Sql.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using System.Security.Claims;
 using Xunit;
 
@@ -15,6 +17,7 @@ namespace Claims.Tests.Infrastructure
     {
         private readonly AuditContext _context;
         private readonly AuditRepository _repository;
+        private readonly Mock<IMapper> _mockMapper;
 
         public AuditRepositoryTests()
         {
@@ -23,7 +26,8 @@ namespace Claims.Tests.Infrastructure
                 .Options;
 
             _context = new AuditContext(options);
-            _repository = new AuditRepository(_context);
+            _mockMapper = new Mock<IMapper>();
+            _repository = new AuditRepository(_context, _mockMapper.Object);
         }
 
         [Fact]

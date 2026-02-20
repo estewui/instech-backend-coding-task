@@ -1,8 +1,12 @@
-using Infrastructure.Persistence;
+using API.Mapping;
+using AutoMapper;
 using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
+using Infrastructure.Mapping;
+using Infrastructure.Persistence;
 using Infrastructure.Persistence.Mongo.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using Xunit;
 
 namespace Claims.Tests.Infrastructure
 {
@@ -21,7 +25,7 @@ namespace Claims.Tests.Infrastructure
                 .Options;
 
             _context = new ClaimsContext(options);
-            _repository = new CoverRepository(_context);
+            _repository = new CoverRepository(_context, CreateMapper());
         }
 
         [Fact]
@@ -132,6 +136,16 @@ namespace Claims.Tests.Infrastructure
 
             // Act & Assert
             await _repository.DeleteById(nonExistentId); // Should not throw
+        }
+
+        private static IMapper CreateMapper()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<InfrastructureMappingProfile>();
+                cfg.AddProfile<MappingProfile>();
+            });
+            return config.CreateMapper();
         }
     }
 }
