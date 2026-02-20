@@ -1,8 +1,9 @@
 using API.Contracts.Requests;
 using API.Contracts.Responses;
-using API.Contracts.Types;
 using Application.Common.Auditing;
 using Application.Services;
+using AutoMapper;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -14,12 +15,21 @@ public class CoversController : ControllerBase
     private readonly ILogger<CoversController> _logger;
     private readonly ICoverService _coverService;
     private readonly IAuditSink _auditSink;
+    private readonly IMapper _mapper;
 
-    public CoversController(ILogger<CoversController> logger, ICoverService coverService, IAuditSink auditSink)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CoversController"/> class.
+    /// </summary>
+    /// <param name="logger">The logger instance.</param>
+    /// <param name="coverService">The cover service instance.</param>
+    /// <param name="auditSink">The audit sink instance.</param>
+    /// <param name="mapper">The AutoMapper instance.</param>
+    public CoversController(ILogger<CoversController> logger, ICoverService coverService, IAuditSink auditSink, IMapper mapper)
     {
         _logger = logger;
         _coverService = coverService;
         _auditSink = auditSink;
+        _mapper = mapper;
     }
 
     /// <summary>
@@ -42,14 +52,7 @@ public class CoversController : ControllerBase
     public async Task<ActionResult<IEnumerable<CoverResponse>>> GetAsync()
     {
         var results = await _coverService.GetAll();
-        var response = results.Select(c => new CoverResponse
-        {
-            Id = c.Id,
-            StartDate = c.StartDate,
-            EndDate = c.EndDate,
-            Type = (CoverType)(int)c.Type,
-            Premium = c.Premium
-        });
+        var response = _mapper.Map<IEnumerable<CoverResponse>>(results);
         return Ok(response);
     }
 
@@ -64,14 +67,8 @@ public class CoversController : ControllerBase
         var result = await _coverService.GetById(id);
         if (result == null)
             return NotFound();
-        var response = new CoverResponse
-        {
-            Id = result.Id,
-            StartDate = result.StartDate,
-            EndDate = result.EndDate,
-            Type = (CoverType)(int)result.Type,
-            Premium = result.Premium
-        };
+        
+        var response = _mapper.Map<CoverResponse>(result);
         return Ok(response);
     }
 
@@ -83,24 +80,13 @@ public class CoversController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CoverResponse>> CreateAsync([FromBody] CreateCoverRequest request)
     {
-        var cover = new Domain.Entities.Cover
-        {
-            Id = Guid.NewGuid().ToString(),
-            StartDate = request.StartDate,
-            EndDate = request.EndDate,
-            Type = (Domain.Entities.CoverType)(int)request.Type,
-            Premium = request.Premium
-        };
+        var cover = _mapper.Map<Cover>(request);
+        cover.Id = Guid.NewGuid().ToString();
         cover.Premium = _coverService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
+        
         await _coverService.Create(cover);
-        var response = new CoverResponse
-        {
-            Id = cover.Id,
-            StartDate = cover.StartDate,
-            EndDate = cover.EndDate,
-            Type = (CoverType)(int)cover.Type,
-            Premium = cover.Premium
-        };
+        var response = _mapper.Map<CoverResponse>(cover);
+        
         await _auditSink.EnqueueAsync(new AuditEvent
         {
             Type = AuditType.Cover,
@@ -108,6 +94,7 @@ public class CoversController : ControllerBase
             HttpRequestType = "POST",
             Timestamp = DateTime.UtcNow
         });
+        
         return Ok(response);
     }
 

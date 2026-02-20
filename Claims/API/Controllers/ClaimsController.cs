@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Application.Services;
 using API.Contracts.Requests;
 using API.Contracts.Responses;
-using API.Contracts.Types;
 using Application.Common.Auditing;
+using AutoMapper;
+using Domain.Entities;
 
 namespace API.Controllers
 {
@@ -14,12 +15,14 @@ namespace API.Controllers
         private readonly ILogger<ClaimsController> _logger;
         private readonly IClaimService _claimService;
         private readonly IAuditSink _auditSink;
+        private readonly IMapper _mapper;
 
-        public ClaimsController(ILogger<ClaimsController> logger, IClaimService claimService, IAuditSink auditSink)
+        public ClaimsController(ILogger<ClaimsController> logger, IClaimService claimService, IAuditSink auditSink, IMapper mapper)
         {
             _logger = logger;
             _claimService = claimService;
             _auditSink = auditSink;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -30,15 +33,7 @@ namespace API.Controllers
         public async Task<List<ClaimResponse>> GetAsync()
         {
             var claims = await _claimService.GetClaimsAsync();
-            return claims.Select(c => new ClaimResponse
-            {
-                Id = c.Id,
-                CoverId = c.CoverId,
-                Created = c.Created,
-                Name = c.Name,
-                Type = (ClaimType)(int)c.Type,
-                DamageCost = c.DamageCost
-            }).ToList();
+            return _mapper.Map<List<ClaimResponse>>(claims);
         }
 
         /// <summary>
@@ -49,25 +44,12 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<ClaimResponse>> CreateAsync([FromBody] CreateClaimRequest request)
         {
-            var claim = new Domain.Entities.Claim
-            {
-                Id = Guid.NewGuid().ToString(),
-                CoverId = request.CoverId,
-                Created = request.Created,
-                Name = request.Name,
-                Type = (Domain.Entities.ClaimType)(int)request.Type,
-                DamageCost = request.DamageCost
-            };
+            var claim = _mapper.Map<Claim>(request);
+            claim.Id = Guid.NewGuid().ToString();
+            
             var createdClaim = await _claimService.CreateClaimAsync(claim);
-            var response = new ClaimResponse
-            {
-                Id = createdClaim.Id,
-                CoverId = createdClaim.CoverId,
-                Created = createdClaim.Created,
-                Name = createdClaim.Name,
-                Type = (ClaimType)(int)createdClaim.Type,
-                DamageCost = createdClaim.DamageCost
-            };
+            var response = _mapper.Map<ClaimResponse>(createdClaim);
+            
             await _auditSink.EnqueueAsync(new AuditEvent
             {
                 Type = AuditType.Claim,
@@ -75,6 +57,7 @@ namespace API.Controllers
                 HttpRequestType = "POST",
                 Timestamp = DateTime.UtcNow
             });
+            
             return Ok(response);
         }
 
@@ -108,15 +91,8 @@ namespace API.Controllers
             var claim = await _claimService.GetClaimByIdAsync(id);
             if (claim == null)
                 return NotFound();
-            var response = new ClaimResponse
-            {
-                Id = claim.Id,
-                CoverId = claim.CoverId,
-                Created = claim.Created,
-                Name = claim.Name,
-                Type = (ClaimType)(int)claim.Type,
-                DamageCost = claim.DamageCost
-            };
+            
+            var response = _mapper.Map<ClaimResponse>(claim);
             return Ok(response);
         }
     }

@@ -49,6 +49,8 @@ builder.Services.AddSingleton<IAuditSink, ChannelAuditSink>();
 // Register background worker
 builder.Services.AddHostedService<AuditBackgroundService>();
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 // Add services to the container.
 builder.Services.AddScoped<IClaimRepository, ClaimRepository>();
 builder.Services.AddScoped<ICoverRepository, CoverRepository>();
