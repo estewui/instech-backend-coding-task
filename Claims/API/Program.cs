@@ -35,7 +35,6 @@ var mongoContainer = new MongoDbBuilder()
 
 await sqlContainer.StartAsync();
 await mongoContainer.StartAsync();
-Console.WriteLine(sqlContainer.GetConnectionString());
 
 // Channel for in-memory audit buffering
 var auditChannel = Channel.CreateBounded<AuditEvent>(new BoundedChannelOptions(10_000)
