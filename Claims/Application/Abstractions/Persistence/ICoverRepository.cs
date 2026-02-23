@@ -12,23 +12,23 @@ namespace Application.Abstractions.Persistence
         /// </summary>
         /// <param name="cover">The cover to create.</param>
         /// <returns>The created cover.</returns>
-        Task<Cover> Create(Cover cover);
+        Task<Cover> Create(Cover cover, CancellationToken cancellationToken);
         /// <summary>
         /// Deletes a cover by its identifier asynchronously.
         /// </summary>
         /// <param name="id">The identifier of the cover to delete.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task DeleteById(string id);
+        Task DeleteById(string id, CancellationToken cancellationToken);
         /// <summary>
         /// Retrieves all covers asynchronously.
         /// </summary>
         /// <returns>A list of all covers.</returns>
-        Task<List<Cover>> GetAll();
+        Task<List<Cover>> GetAll(CancellationToken cancellationToken);
         /// <summary>
         /// Retrieves a cover by its identifier asynchronously.
         /// </summary>
         /// <param name="id">The identifier of the cover.</param>
         /// <returns>The cover with the specified identifier, or null if not found.</returns>
-        Task<Cover?> GetById(string id);
+        Task<Cover?> GetById(string id, CancellationToken cancellationToken);
     }
 }

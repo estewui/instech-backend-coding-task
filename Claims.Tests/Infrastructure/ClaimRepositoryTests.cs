@@ -41,7 +41,7 @@ namespace Claims.Tests.Infrastructure
             };
 
             // Act
-            var result = await _repository.Create(claim);
+            var result = await _repository.Create(claim, CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
@@ -62,10 +62,10 @@ namespace Claims.Tests.Infrastructure
                 DamageCost = 3000m,
                 Created = DateTime.UtcNow
             };
-            var createdClaim = await _repository.Create(claim);
+            var createdClaim = await _repository.Create(claim, CancellationToken.None);
 
             // Act
-            var result = await _repository.GetById(createdClaim.Id);
+            var result = await _repository.GetById(createdClaim.Id, CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
@@ -79,11 +79,11 @@ namespace Claims.Tests.Infrastructure
             // Arrange
             var claim1 = new Claim { CoverId = "cover-1", Name = "Claim 1", Type = ClaimType.Grounding, DamageCost = 1000m, Created = DateTime.UtcNow };
             var claim2 = new Claim { CoverId = "cover-2", Name = "Claim 2", Type = ClaimType.BadWeather, DamageCost = 2000m, Created = DateTime.UtcNow };
-            await _repository.Create(claim1);
-            await _repository.Create(claim2);
+            await _repository.Create(claim1, CancellationToken.None);
+            await _repository.Create(claim2, CancellationToken.None);
 
             // Act
-            var result = await _repository.GetAll();
+            var result = await _repository.GetAll(CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
@@ -102,11 +102,11 @@ namespace Claims.Tests.Infrastructure
                 DamageCost = 4000m,
                 Created = DateTime.UtcNow
             };
-            var createdClaim = await _repository.Create(claim);
+            var createdClaim = await _repository.Create(claim, CancellationToken.None);
 
             // Act
-            await _repository.DeleteById(createdClaim.Id);
-            var result = await _repository.GetById(createdClaim.Id);
+            await _repository.DeleteById(createdClaim.Id, CancellationToken.None);
+            var result = await _repository.GetById(createdClaim.Id, CancellationToken.None);
 
             // Assert
             Assert.Null(result);
@@ -119,7 +119,7 @@ namespace Claims.Tests.Infrastructure
             var nonExistentId = Guid.NewGuid().ToString();
 
             // Act & Assert
-            await _repository.DeleteById(nonExistentId); // Should not throw
+            await _repository.DeleteById(nonExistentId, CancellationToken.None); // Should not throw
         }
         private static IMapper CreateMapper()
         {

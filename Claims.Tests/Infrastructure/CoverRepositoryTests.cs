@@ -43,7 +43,7 @@ namespace Claims.Tests.Infrastructure
             };
 
             // Act
-            var result = await _repository.Create(cover);
+            var result = await _repository.Create(cover, CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
@@ -63,11 +63,11 @@ namespace Claims.Tests.Infrastructure
                 Type = CoverType.PassengerShip,
                 Premium = 8000m
             };
-            await _repository.Create(cover);
+            await _repository.Create(cover, CancellationToken.None);
             await _context.SaveChangesAsync(CancellationToken.None);
 
             // Act
-            var result = await _repository.GetById(cover.Id);
+            var result = await _repository.GetById(cover.Id, CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
@@ -82,7 +82,7 @@ namespace Claims.Tests.Infrastructure
             var nonExistentId = Guid.NewGuid().ToString();
 
             // Act
-            var result = await _repository.GetById(nonExistentId);
+            var result = await _repository.GetById(nonExistentId, CancellationToken.None);
 
             // Assert
             Assert.Null(result);
@@ -94,12 +94,12 @@ namespace Claims.Tests.Infrastructure
             // Arrange
             var cover1 = new Cover { Id = Guid.NewGuid().ToString(), StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(30), Type = CoverType.Yacht, Premium = 1000m };
             var cover2 = new Cover { Id = Guid.NewGuid().ToString(), StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(60), Type = CoverType.Tanker, Premium = 2000m };
-            await _repository.Create(cover1);
-            await _repository.Create(cover2);
+            await _repository.Create(cover1, CancellationToken.None);
+            await _repository.Create(cover2, CancellationToken.None);
             await _context.SaveChangesAsync(CancellationToken.None);
 
             // Act
-            var result = await _repository.GetAll();
+            var result = await _repository.GetAll(CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
@@ -118,12 +118,12 @@ namespace Claims.Tests.Infrastructure
                 Type = CoverType.ContainerShip,
                 Premium = 6000m
             };
-            await _repository.Create(cover);
+            await _repository.Create(cover, CancellationToken.None);
             await _context.SaveChangesAsync(CancellationToken.None);
 
             // Act
-            await _repository.DeleteById(cover.Id);
-            var result = await _repository.GetById(cover.Id);
+            await _repository.DeleteById(cover.Id, CancellationToken.None);
+            var result = await _repository.GetById(cover.Id, CancellationToken.None);
 
             // Assert
             Assert.Null(result);
@@ -136,7 +136,7 @@ namespace Claims.Tests.Infrastructure
             var nonExistentId = Guid.NewGuid().ToString();
 
             // Act & Assert
-            await _repository.DeleteById(nonExistentId); // Should not throw
+            await _repository.DeleteById(nonExistentId, CancellationToken.None); // Should not throw
         }
 
         private static IMapper CreateMapper()

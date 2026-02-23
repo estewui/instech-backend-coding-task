@@ -25,36 +25,36 @@ namespace Infrastructure.Persistence
             modelBuilder.Entity<Cover>().ToCollection("covers");
         }
 
-        public async Task<IEnumerable<Claim>> GetClaimsAsync()
+        public async Task<IEnumerable<Claim>> GetClaimsAsync(CancellationToken cancellationToken = default)
         {
-            return await Claims.ToListAsync();
+            return await Claims.ToListAsync(cancellationToken);
         }
 
-        public async Task<Claim?> GetClaimAsync(string id)
+        public async Task<Claim?> GetClaimAsync(string id, CancellationToken cancellationToken = default)
         {
             return await Claims
                 .Where(claim => claim.Id == id)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task AddItemAsync(Claim item)
+        public async Task AddItemAsync(Claim item, CancellationToken cancellationToken = default)
         {
             Claims.Add(item);
-            await SaveChangesAsync();
+            await SaveChangesAsync(cancellationToken);
         }
-        public async Task AddCoverAsync(Cover item)
+        public async Task AddCoverAsync(Cover item, CancellationToken cancellationToken = default)
         {
             Covers.Add(item);
-            await SaveChangesAsync();
+            await SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteItemAsync(string id)
+        public async Task DeleteItemAsync(string id, CancellationToken cancellationToken = default)
         {
-            var claim = await GetClaimAsync(id);
+            var claim = await GetClaimAsync(id, cancellationToken);
             if (claim is not null)
             {
                 Claims.Remove(claim);
-                await SaveChangesAsync();
+                await SaveChangesAsync(cancellationToken);
             }
         }
     }

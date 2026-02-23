@@ -19,33 +19,33 @@ namespace Infrastructure.Persistence.Mongo.Repositories
             _mapper = mapper;
         }
 
-        public async Task<List<DomainEntities.Cover>> GetAll()
+        public async Task<List<DomainEntities.Cover>> GetAll(CancellationToken cancellationToken)
         {
-            var mongoCovers = await _db.Covers.ToListAsync();
+            var mongoCovers = await _db.Covers.ToListAsync(cancellationToken);
             return _mapper.Map<List<DomainEntities.Cover>>(mongoCovers);
         }
 
-        public async Task<DomainEntities.Cover?> GetById(string id)
+        public async Task<DomainEntities.Cover?> GetById(string id, CancellationToken cancellationToken)
         {
-            var mongoCovers = await GetAll();
+            var mongoCovers = await GetAll(cancellationToken);
             return mongoCovers.SingleOrDefault(cover => cover.Id == id);
         }
 
-        public async Task<DomainEntities.Cover> Create(DomainEntities.Cover cover)
+        public async Task<DomainEntities.Cover> Create(DomainEntities.Cover cover, CancellationToken cancellationToken)
         {
             var mongoCover = _mapper.Map<MongoModels.Cover>(cover);
-            await _db.AddCoverAsync(mongoCover);
+            await _db.AddCoverAsync(mongoCover, cancellationToken);
             return cover;
         }
 
-        public async Task DeleteById(string id)
+        public async Task DeleteById(string id, CancellationToken cancellationToken)
         {
-            var mongoCovers = await _db.Covers.ToListAsync();
+            var mongoCovers = await _db.Covers.ToListAsync(cancellationToken);
             var mongoCover = mongoCovers.SingleOrDefault(c => c.Id == id);
             if (mongoCover is not null)
             {
                 _db.Covers.Remove(mongoCover);
-                await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync(cancellationToken);
             }
         }
     }

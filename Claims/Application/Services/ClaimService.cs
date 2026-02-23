@@ -16,26 +16,26 @@ namespace Application.Services
             _validator = validator;
         }
 
-        public async Task<Claim?> GetClaimByIdAsync(string id)
+        public async Task<Claim?> GetClaimByIdAsync(string id, CancellationToken cancellationToken)
         {
-            return await _claimRepository.GetById(id);
+            return await _claimRepository.GetById(id, cancellationToken);
         }
 
-        public void DeleteClaimById(string id)
+        public void DeleteClaimById(string id, CancellationToken cancellationToken)
         {
-            _claimRepository.DeleteById(id);
+            _claimRepository.DeleteById(id, cancellationToken);
         }
 
-        public async Task<Claim> CreateClaimAsync(Claim claim)
+        public async Task<Claim> CreateClaimAsync(Claim claim, CancellationToken cancellationToken)
         {
             await _validator.ValidateAndThrowAsync(claim);
 
-            return await _claimRepository.Create(claim);
+            return await _claimRepository.Create(claim, cancellationToken);
         }
 
-        public async Task<List<Claim>> GetClaimsAsync()
+        public async Task<List<Claim>> GetClaimsAsync(CancellationToken cancellationToken)
         {
-            return await _claimRepository.GetAll();
+            return await _claimRepository.GetAll(cancellationToken);
         }
     }
 }

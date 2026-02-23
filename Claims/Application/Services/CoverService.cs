@@ -22,26 +22,26 @@ namespace Application.Services
             return PremiumCalculator.ComputePremium(startDate, endDate, coverType);
         }
 
-        public Task<Cover?> GetById(string id)
+        public Task<Cover?> GetById(string id, CancellationToken cancellationToken)
         {
-            return _coverRepository.GetById(id);
+            return _coverRepository.GetById(id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Cover>> GetAll()
+        public async Task<IEnumerable<Cover>> GetAll(CancellationToken cancellationToken)
         {
-            return await _coverRepository.GetAll();
+            return await _coverRepository.GetAll(cancellationToken);
         }
 
-        public async Task<Cover> Create(Cover cover)
+        public async Task<Cover> Create(Cover cover, CancellationToken cancellationToken)
         {
             _validator.ValidateAndThrow(cover);
 
-            return await _coverRepository.Create(cover);
+            return await _coverRepository.Create(cover, cancellationToken);
         }
 
-        public Task DeleteById(string id)
+        public Task DeleteById(string id, CancellationToken cancellationToken)
         {
-            return _coverRepository.DeleteById(id);
+            return _coverRepository.DeleteById(id, cancellationToken);
         }
     }
 }

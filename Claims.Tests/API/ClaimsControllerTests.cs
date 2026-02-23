@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -48,10 +43,10 @@ namespace Claims.Tests.API
                 new Claim { Id = "1", Name = "Claim 1", CoverId = "cover-1", Type = ClaimType.Fire, DamageCost = 1000m, Created = DateTime.UtcNow },
                 new Claim { Id = "2", Name = "Claim 2", CoverId = "cover-2", Type = ClaimType.Collision, DamageCost = 2000m, Created = DateTime.UtcNow }
             };
-            _mockClaimService.Setup(s => s.GetClaimsAsync()).ReturnsAsync(claims);
+            _mockClaimService.Setup(s => s.GetClaimsAsync(CancellationToken.None)).ReturnsAsync(claims);
 
             // Act
-            var result = await _controller.GetAsync();
+            var result = await _controller.GetAsync(CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
@@ -75,10 +70,10 @@ namespace Claims.Tests.API
                 DamageCost = 3000m,
                 Created = DateTime.UtcNow
             };
-            _mockClaimService.Setup(s => s.GetClaimByIdAsync(claimId)).ReturnsAsync(claim);
+            _mockClaimService.Setup(s => s.GetClaimByIdAsync(claimId, CancellationToken.None)).ReturnsAsync(claim);
 
             // Act
-            var result = await _controller.GetAsync(claimId);
+            var result = await _controller.GetAsync(claimId, CancellationToken.None);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -92,10 +87,10 @@ namespace Claims.Tests.API
         {
             // Arrange
             var claimId = "non-existent";
-            _mockClaimService.Setup(s => s.GetClaimByIdAsync(claimId)).ReturnsAsync((Claim?)null);
+            _mockClaimService.Setup(s => s.GetClaimByIdAsync(claimId, CancellationToken.None)).ReturnsAsync((Claim?)null);
 
             // Act
-            var result = await _controller.GetAsync(claimId);
+            var result = await _controller.GetAsync(claimId, CancellationToken.None);
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
@@ -122,10 +117,10 @@ namespace Claims.Tests.API
                 DamageCost = request.DamageCost,
                 Created = request.Created
             };
-            _mockClaimService.Setup(s => s.CreateClaimAsync(It.IsAny<Claim>())).ReturnsAsync(createdClaim);
+            _mockClaimService.Setup(s => s.CreateClaimAsync(It.IsAny<Claim>(), CancellationToken.None)).ReturnsAsync(createdClaim);
 
             // Act
-            var result = await _controller.CreateAsync(request);
+            var result = await _controller.CreateAsync(request, CancellationToken.None);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -141,11 +136,11 @@ namespace Claims.Tests.API
             var claimId = "claim-1";
 
             // Act
-            var result = await _controller.DeleteAsync(claimId);
+            var result = await _controller.DeleteAsync(claimId, CancellationToken.None);
 
             // Assert
             Assert.IsType<OkResult>(result);
-            _mockClaimService.Verify(s => s.DeleteClaimById(claimId), Times.Once);
+            _mockClaimService.Verify(s => s.DeleteClaimById(claimId, CancellationToken.None), Times.Once);
         }
 
         private static IMapper CreateMapper()

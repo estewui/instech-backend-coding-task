@@ -43,10 +43,10 @@ namespace Claims.Tests.API
                 new Cover { Id = "1", Type = CoverType.Yacht, Premium = 1000m, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(30) },
                 new Cover { Id = "2", Type = CoverType.Tanker, Premium = 2000m, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(60) }
             };
-            _mockCoverService.Setup(s => s.GetAll()).ReturnsAsync(covers);
+            _mockCoverService.Setup(s => s.GetAll(CancellationToken.None)).ReturnsAsync(covers);
 
             // Act
-            var result = await _controller.GetAsync();
+            var result = await _controller.GetAsync(CancellationToken.None);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -67,10 +67,10 @@ namespace Claims.Tests.API
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(30)
             };
-            _mockCoverService.Setup(s => s.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverService.Setup(s => s.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
-            var result = await _controller.GetAsync(coverId);
+            var result = await _controller.GetAsync(coverId, CancellationToken.None);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -84,10 +84,10 @@ namespace Claims.Tests.API
         {
             // Arrange
             var coverId = "non-existent";
-            _mockCoverService.Setup(s => s.GetById(coverId)).ReturnsAsync((Cover?)null);
+            _mockCoverService.Setup(s => s.GetById(coverId, CancellationToken.None)).ReturnsAsync((Cover?)null);
 
             // Act
-            var result = await _controller.GetAsync(coverId);
+            var result = await _controller.GetAsync(coverId, CancellationToken.None);
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
@@ -107,20 +107,20 @@ namespace Claims.Tests.API
             var computedPremium = 41250m;
             _mockCoverService.Setup(s => s.ComputePremium(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CoverType>()))
                 .Returns(computedPremium);
-            _mockCoverService.Setup(s => s.Create(It.IsAny<Cover>())).ReturnsAsync((Cover cover) =>
+            _mockCoverService.Setup(s => s.Create(It.IsAny<Cover>(), CancellationToken.None)).ReturnsAsync((Cover cover, CancellationToken ct) =>
             {
                 cover.Id = "new-cover-id";
                 return cover;
             });
 
             // Act
-            var result = await _controller.CreateAsync(request);
+            var result = await _controller.CreateAsync(request, CancellationToken.None);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var coverResponse = Assert.IsType<CoverResponse>(okResult.Value);
             Assert.Equal(computedPremium, coverResponse.Premium);
-            _mockCoverService.Verify(s => s.Create(It.IsAny<Cover>()), Times.Once);
+            _mockCoverService.Verify(s => s.Create(It.IsAny<Cover>(), CancellationToken.None), Times.Once);
         }
 
         [Fact]
@@ -128,14 +128,14 @@ namespace Claims.Tests.API
         {
             // Arrange
             var coverId = "cover-1";
-            _mockCoverService.Setup(s => s.DeleteById(coverId)).Returns(Task.CompletedTask);
+            _mockCoverService.Setup(s => s.DeleteById(coverId, CancellationToken.None)).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _controller.DeleteAsync(coverId);
+            var result = await _controller.DeleteAsync(coverId, CancellationToken.None);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
-            _mockCoverService.Verify(s => s.DeleteById(coverId), Times.Once);
+            _mockCoverService.Verify(s => s.DeleteById(coverId, CancellationToken.None), Times.Once);
         }
 
         [Fact]

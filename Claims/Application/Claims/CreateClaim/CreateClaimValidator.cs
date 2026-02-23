@@ -12,7 +12,7 @@ namespace Application.Claims.CreateClaim
             RuleFor(x => x)
                 .MustAsync(async (claim, ct) =>
                 {
-                    var coverDb = await covers.GetById(claim.CoverId);
+                    var coverDb = await covers.GetById(claim.CoverId, CancellationToken.None);
                     if (coverDb == default)
                         return false;
 

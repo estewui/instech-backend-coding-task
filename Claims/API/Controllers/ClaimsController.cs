@@ -32,11 +32,11 @@ namespace API.Controllers
         /// </summary>
         /// <returns>A list of all claims.</returns>
         [HttpGet]
-        public async Task<ActionResult<List<ClaimResponse>>> GetAsync()
+        public async Task<ActionResult<List<ClaimResponse>>> GetAsync(CancellationToken cancellationToken)
         {
             try
             {
-                var claims = await _claimService.GetClaimsAsync();
+                var claims = await _claimService.GetClaimsAsync(cancellationToken);
                 return _mapper.Map<List<ClaimResponse>>(claims);
             }
             catch (Exception ex)
@@ -52,14 +52,14 @@ namespace API.Controllers
         /// <param name="request">The claim to create.</param>
         /// <returns>The created claim.</returns>
         [HttpPost]
-        public async Task<ActionResult<ClaimResponse>> CreateAsync([FromBody] CreateClaimRequest request)
+        public async Task<ActionResult<ClaimResponse>> CreateAsync([FromBody] CreateClaimRequest request, CancellationToken cancellationToken)
         {
             try
             {
                 var claim = _mapper.Map<Claim>(request);
                 claim.Id = Guid.NewGuid().ToString();
             
-                var createdClaim = await _claimService.CreateClaimAsync(claim);
+                var createdClaim = await _claimService.CreateClaimAsync(claim, cancellationToken);
                 var response = _mapper.Map<ClaimResponse>(createdClaim);
             
                 await _auditSink.EnqueueAsync(new AuditEvent
@@ -90,11 +90,11 @@ namespace API.Controllers
         /// <param name="id">The identifier of the claim to delete.</param>
         /// <returns>Ok if the claim was deleted.</returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(string id)
+        public async Task<IActionResult> DeleteAsync(string id, CancellationToken cancellationToken)
         {
             try
             {
-                _claimService.DeleteClaimById(id);
+                _claimService.DeleteClaimById(id, cancellationToken);
                 await _auditSink.EnqueueAsync(new AuditEvent
                 {
                     Type = AuditType.Claim,
@@ -117,11 +117,11 @@ namespace API.Controllers
         /// <param name="id">The identifier of the claim.</param>
         /// <returns>The claim with the specified identifier.</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ClaimResponse>> GetAsync(string id)
+        public async Task<ActionResult<ClaimResponse>> GetAsync(string id, CancellationToken cancellationToken)
         {
             try
             {
-                var claim = await _claimService.GetClaimByIdAsync(id);
+                var claim = await _claimService.GetClaimByIdAsync(id, cancellationToken);
                 if (claim == null)
                     return NotFound();
             

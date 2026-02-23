@@ -42,7 +42,7 @@ namespace Claims.Tests.Application
                 Created = DateTime.UtcNow
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
@@ -65,7 +65,7 @@ namespace Claims.Tests.Application
                 Created = DateTime.UtcNow
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(It.IsAny<string>())).ReturnsAsync((Cover?)null);
+            _mockCoverRepository.Setup(r => r.GetById(It.IsAny<string>(), CancellationToken.None)).ReturnsAsync((Cover?)null);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
@@ -98,7 +98,7 @@ namespace Claims.Tests.Application
                 Created = DateTime.UtcNow // Before cover start date
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
@@ -131,7 +131,7 @@ namespace Claims.Tests.Application
                 Created = DateTime.UtcNow // After cover end date
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
@@ -165,7 +165,7 @@ namespace Claims.Tests.Application
                 Created = startDate
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
@@ -198,7 +198,7 @@ namespace Claims.Tests.Application
                 Created = endDate
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
@@ -230,7 +230,7 @@ namespace Claims.Tests.Application
                 Created = DateTime.UtcNow
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
@@ -263,7 +263,7 @@ namespace Claims.Tests.Application
                 Created = DateTime.UtcNow
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
@@ -296,7 +296,7 @@ namespace Claims.Tests.Application
                 Created = DateTime.UtcNow
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
@@ -328,7 +328,7 @@ namespace Claims.Tests.Application
                 Created = DateTime.UtcNow
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
@@ -364,7 +364,7 @@ namespace Claims.Tests.Application
                 Created = DateTime.UtcNow
             };
 
-            _mockCoverRepository.Setup(r => r.GetById(coverId)).ReturnsAsync(cover);
+            _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
             // Act
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);

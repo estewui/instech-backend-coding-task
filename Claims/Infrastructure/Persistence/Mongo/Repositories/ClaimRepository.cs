@@ -17,19 +17,19 @@ namespace Infrastructure.Persistence.Mongo.Repositories
             _mapper = mapper;
         }
 
-        public async Task<List<DomainEntities.Claim>> GetAll()
+        public async Task<List<DomainEntities.Claim>> GetAll(CancellationToken cancellationToken)
         {
             var mongoClaims = await _db.GetClaimsAsync();
             return _mapper.Map<List<DomainEntities.Claim>>(mongoClaims.ToList());
         }
 
-        public async Task<DomainEntities.Claim?> GetById(string id)
+        public async Task<DomainEntities.Claim?> GetById(string id, CancellationToken cancellationToken)
         {
             var mongoClaim = await _db.GetClaimAsync(id);
             return _mapper.Map<DomainEntities.Claim?>(mongoClaim);
         }
 
-        public async Task<DomainEntities.Claim> Create(DomainEntities.Claim claim)
+        public async Task<DomainEntities.Claim> Create(DomainEntities.Claim claim, CancellationToken cancellationToken)
         {
             claim.Id = Guid.NewGuid().ToString();
             var mongoClaim = _mapper.Map<MongoModels.Claim>(claim);
@@ -38,7 +38,7 @@ namespace Infrastructure.Persistence.Mongo.Repositories
         }
 
 
-        public async Task DeleteById(string id)
+        public async Task DeleteById(string id, CancellationToken cancellationToken)
         {
             await _db.DeleteItemAsync(id);
         }

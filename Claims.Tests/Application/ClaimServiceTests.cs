@@ -38,16 +38,16 @@ namespace Claims.Tests.Application
                 DamageCost = 5000m,
                 Created = DateTime.UtcNow
             };
-            _mockClaimRepository.Setup(r => r.GetById(claimId)).ReturnsAsync(expectedClaim);
+            _mockClaimRepository.Setup(r => r.GetById(claimId, CancellationToken.None)).ReturnsAsync(expectedClaim);
 
             // Act
-            var result = await _claimService.GetClaimByIdAsync(claimId);
+            var result = await _claimService.GetClaimByIdAsync(claimId, CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(claimId, result.Id);
             Assert.Equal("Test Claim", result.Name);
-            _mockClaimRepository.Verify(r => r.GetById(claimId), Times.Once);
+            _mockClaimRepository.Verify(r => r.GetById(claimId, CancellationToken.None), Times.Once);
         }
 
         [Fact]
@@ -59,15 +59,15 @@ namespace Claims.Tests.Application
                 new Claim { Id = "1", Name = "Claim 1", CoverId = "cover-1", Type = ClaimType.Fire, DamageCost = 1000m, Created = DateTime.UtcNow },
                 new Claim { Id = "2", Name = "Claim 2", CoverId = "cover-2", Type = ClaimType.Grounding, DamageCost = 2000m, Created = DateTime.UtcNow }
             };
-            _mockClaimRepository.Setup(r => r.GetAll()).ReturnsAsync(expectedClaims);
+            _mockClaimRepository.Setup(r => r.GetAll(CancellationToken.None)).ReturnsAsync(expectedClaims);
 
             // Act
-            var result = await _claimService.GetClaimsAsync();
+            var result = await _claimService.GetClaimsAsync(CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);
-            _mockClaimRepository.Verify(r => r.GetAll(), Times.Once);
+            _mockClaimRepository.Verify(r => r.GetAll(CancellationToken.None), Times.Once);
         }
 
         [Fact]
@@ -82,15 +82,15 @@ namespace Claims.Tests.Application
                 DamageCost = 3000m,
                 Created = DateTime.UtcNow
             };
-            _mockClaimRepository.Setup(r => r.Create(It.IsAny<Claim>())).ReturnsAsync(newClaim);
+            _mockClaimRepository.Setup(r => r.Create(It.IsAny<Claim>(), CancellationToken.None)).ReturnsAsync(newClaim);
 
             // Act
-            var result = await _claimService.CreateClaimAsync(newClaim);
+            var result = await _claimService.CreateClaimAsync(newClaim, CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal("New Claim", result.Name);
-            _mockClaimRepository.Verify(r => r.Create(It.IsAny<Claim>()), Times.Once);
+            _mockClaimRepository.Verify(r => r.Create(It.IsAny<Claim>(), CancellationToken.None), Times.Once);
         }
 
         [Fact]
@@ -98,13 +98,13 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var claimId = "claim-1";
-            _mockClaimRepository.Setup(r => r.DeleteById(claimId)).Returns(Task.CompletedTask);
+            _mockClaimRepository.Setup(r => r.DeleteById(claimId, CancellationToken.None)).Returns(Task.CompletedTask);
 
             // Act
-            _claimService.DeleteClaimById(claimId);
+            _claimService.DeleteClaimById(claimId, CancellationToken.None);
 
             // Assert
-            _mockClaimRepository.Verify(r => r.DeleteById(claimId), Times.Once);
+            _mockClaimRepository.Verify(r => r.DeleteById(claimId, CancellationToken.None), Times.Once);
         }
     }
 }

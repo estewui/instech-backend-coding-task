@@ -52,11 +52,11 @@ public class CoversController : ControllerBase
     /// </summary>
     /// <returns>A list of all covers.</returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CoverResponse>>> GetAsync()
+    public async Task<ActionResult<IEnumerable<CoverResponse>>> GetAsync(CancellationToken cancellationToken)
     {
         try
         {
-            var results = await _coverService.GetAll();
+            var results = await _coverService.GetAll(cancellationToken);
             var response = _mapper.Map<IEnumerable<CoverResponse>>(results);
             return Ok(response);
         }
@@ -73,11 +73,11 @@ public class CoversController : ControllerBase
     /// <param name="id">The identifier of the cover.</param>
     /// <returns>The cover with the specified identifier.</returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<CoverResponse>> GetAsync(string id)
+    public async Task<ActionResult<CoverResponse>> GetAsync(string id, CancellationToken cancellationToken)
     {
         try
         {
-            var result = await _coverService.GetById(id);
+            var result = await _coverService.GetById(id, cancellationToken);
             if (result == null)
                 return NotFound();
         
@@ -97,7 +97,7 @@ public class CoversController : ControllerBase
     /// <param name="request">The cover to create.</param>
     /// <returns>The created cover.</returns>
     [HttpPost]
-    public async Task<ActionResult<CoverResponse>> CreateAsync([FromBody] CreateCoverRequest request)
+    public async Task<ActionResult<CoverResponse>> CreateAsync([FromBody] CreateCoverRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -105,7 +105,7 @@ public class CoversController : ControllerBase
             cover.Id = Guid.NewGuid().ToString();
             cover.Premium = _coverService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
         
-            await _coverService.Create(cover);
+            await _coverService.Create(cover, cancellationToken);
             var response = _mapper.Map<CoverResponse>(cover);
         
             await _auditSink.EnqueueAsync(new AuditEvent
@@ -136,11 +136,11 @@ public class CoversController : ControllerBase
     /// <param name="id">The identifier of the cover to delete.</param>
     /// <returns>No content if the cover was deleted.</returns>
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteAsync(string id)
+    public async Task<ActionResult> DeleteAsync(string id, CancellationToken cancellationToken)
     {
         try
         {
-            await _coverService.DeleteById(id);
+            await _coverService.DeleteById(id, cancellationToken);
             await _auditSink.EnqueueAsync(new AuditEvent
             {
                 Type = AuditType.Cover,
