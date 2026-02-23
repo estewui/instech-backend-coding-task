@@ -2,7 +2,6 @@ using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 using System.Threading.Channels;
 
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using Testcontainers.MongoDb;
@@ -14,6 +13,7 @@ using Application.Claims.CreateClaim;
 using Application.Common.Auditing;
 using Application.Covers.CreateCover;
 using Application.Services;
+using FluentValidation;
 using Infrastructure.Auditing;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Mongo.Repositories;
@@ -35,6 +35,7 @@ var mongoContainer = new MongoDbBuilder()
 
 await sqlContainer.StartAsync();
 await mongoContainer.StartAsync();
+Console.WriteLine(sqlContainer.GetConnectionString());
 
 // Channel for in-memory audit buffering
 var auditChannel = Channel.CreateBounded<AuditEvent>(new BoundedChannelOptions(10_000)
@@ -75,11 +76,16 @@ builder.Services
 builder.Services.AddDbContext<AuditContext>(options =>
     options.UseSqlServer(sqlContainer.GetConnectionString()));
 
+// Register MongoClient as singleton - it's thread-safe and should be reused
+var mongoClient = new MongoClient(mongoContainer.GetConnectionString());
+var mongoDatabase = mongoClient.GetDatabase(builder.Configuration["MongoDb:DatabaseName"] ?? "ClaimsDb");
+
+builder.Services.AddSingleton(mongoClient);
+builder.Services.AddSingleton(mongoDatabase);
+
 builder.Services.AddDbContext<ClaimsContext>(options =>
 {
-    var client = new MongoClient(mongoContainer.GetConnectionString());
-    var database = client.GetDatabase(builder.Configuration["MongoDb:DatabaseName"]); // Use a default/test database name
-    options.UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName);
+    options.UseMongoDB(mongoDatabase.Client, mongoDatabase.DatabaseNamespace.DatabaseName);
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
