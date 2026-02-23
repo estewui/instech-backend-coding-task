@@ -178,7 +178,7 @@ namespace Claims.Tests.Application
 
             // Assert
             result.ShouldHaveValidationErrorFor(c => c.DamageCost)
-                .WithErrorMessage("DamageCost cannot exceed 100.000.");
+                .WithErrorMessage("DamageCost must be greater than 0.");
         }
 
         [Fact]
@@ -206,7 +206,7 @@ namespace Claims.Tests.Application
         }
 
         [Fact]
-        public async Task Validate_ShouldPass_WhenDamageCostIsZero()
+        public async Task Validate_ShouldFail_WhenDamageCostIsZero()
         {
             // Arrange
             var coverId = "cover-1";
@@ -225,7 +225,8 @@ namespace Claims.Tests.Application
             var result = await _validator.TestValidateAsync(claim, null, CancellationToken.None);
 
             // Assert
-            result.ShouldNotHaveAnyValidationErrors();
+            result.ShouldHaveValidationErrorFor(c => c.DamageCost)
+                .WithErrorMessage("DamageCost must be greater than 0.");
         }
 
         [Fact]
