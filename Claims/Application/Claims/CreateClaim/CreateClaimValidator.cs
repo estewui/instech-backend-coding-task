@@ -21,9 +21,12 @@ namespace Application.Claims.CreateClaim
                 })
                 .WithMessage("Created date must be within the period of the related Cover.");
 
+            RuleFor(x => x.DamageCost)
+                .GreaterThan(0)
+                .WithMessage("DamageCost must be greater than 0.");
 
             RuleFor(x => x.DamageCost)
-                .InclusiveBetween(0, 100000)
+                .LessThanOrEqualTo(100000)
                 .WithMessage("DamageCost cannot exceed 100.000.");
         }
     }
