@@ -29,13 +29,9 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var expectedCover = new Cover
+            var expectedCover = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(expectedCover);
 
@@ -55,8 +51,8 @@ namespace Claims.Tests.Application
             // Arrange
             var expectedCovers = new List<Cover>
             {
-                new Cover { Id = "1", Type = CoverType.Yacht, Premium = 1000m, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(30) },
-                new Cover { Id = "2", Type = CoverType.Tanker, Premium = 2000m, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(60) }
+                new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.Yacht, 1000m) { Id = "1" },
+                new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(60), CoverType.Tanker, 2000m) { Id = "2" }
             };
             _mockCoverRepository.Setup(r => r.GetAll(CancellationToken.None)).ReturnsAsync(expectedCovers);
 
@@ -73,13 +69,9 @@ namespace Claims.Tests.Application
         public async Task Create_ShouldCreateCover()
         {
             // Arrange
-            var newCover = new Cover
+            var newCover = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.PassengerShip, 3000m)
             {
-                Id = Guid.NewGuid().ToString(),
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30),
-                Type = CoverType.PassengerShip,
-                Premium = 3000m
+                Id = Guid.NewGuid().ToString()
             };
             _mockCoverRepository.Setup(r => r.Create(It.IsAny<Cover>(), CancellationToken.None)).ReturnsAsync(newCover);
 

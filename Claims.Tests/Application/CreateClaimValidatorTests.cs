@@ -24,22 +24,13 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = DateTime.UtcNow.AddDays(-10),
-                EndDate = DateTime.UtcNow.AddDays(20),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
-            var claim = new Claim
+            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 50000m)
             {
-                Id = "claim-1",
-                CoverId = coverId,
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 50000m,
-                Created = DateTime.UtcNow
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
@@ -55,14 +46,9 @@ namespace Claims.Tests.Application
         public async Task Validate_ShouldFail_WhenCoverDoesNotExist()
         {
             // Arrange
-            var claim = new Claim
+            var claim = new Claim("non-existent-cover", DateTime.UtcNow, "Test Claim", ClaimType.Collision, 50000m)
             {
-                Id = "claim-1",
-                CoverId = "non-existent-cover",
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 50000m,
-                Created = DateTime.UtcNow
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(It.IsAny<string>(), CancellationToken.None)).ReturnsAsync((Cover?)null);
@@ -80,22 +66,13 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(5), DateTime.UtcNow.AddDays(35), CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = DateTime.UtcNow.AddDays(5),
-                EndDate = DateTime.UtcNow.AddDays(35),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
-            var claim = new Claim
+            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 50000m)
             {
-                Id = "claim-1",
-                CoverId = coverId,
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 50000m,
-                Created = DateTime.UtcNow // Before cover start date
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
@@ -113,22 +90,13 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(-30), DateTime.UtcNow.AddDays(-5), CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = DateTime.UtcNow.AddDays(-30),
-                EndDate = DateTime.UtcNow.AddDays(-5),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
-            var claim = new Claim
+            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 50000m)
             {
-                Id = "claim-1",
-                CoverId = coverId,
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 50000m,
-                Created = DateTime.UtcNow // After cover end date
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
@@ -147,22 +115,13 @@ namespace Claims.Tests.Application
             // Arrange
             var coverId = "cover-1";
             var startDate = DateTime.UtcNow.Date;
-            var cover = new Cover
+            var cover = new Cover(startDate, startDate.AddDays(30), CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = startDate,
-                EndDate = startDate.AddDays(30),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
-            var claim = new Claim
+            var claim = new Claim(coverId, startDate, "Test Claim", ClaimType.Collision, 50000m)
             {
-                Id = "claim-1",
-                CoverId = coverId,
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 50000m,
-                Created = startDate
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
@@ -180,22 +139,13 @@ namespace Claims.Tests.Application
             // Arrange
             var coverId = "cover-1";
             var endDate = DateTime.UtcNow.Date.AddDays(30);
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.Date, endDate, CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = DateTime.UtcNow.Date,
-                EndDate = endDate,
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
-            var claim = new Claim
+            var claim = new Claim(coverId, endDate, "Test Claim", ClaimType.Collision, 50000m)
             {
-                Id = "claim-1",
-                CoverId = coverId,
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 50000m,
-                Created = endDate
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
@@ -212,22 +162,13 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = DateTime.UtcNow.AddDays(-10),
-                EndDate = DateTime.UtcNow.AddDays(20),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
-            var claim = new Claim
+            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, -1000m)
             {
-                Id = "claim-1",
-                CoverId = coverId,
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = -1000m,
-                Created = DateTime.UtcNow
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
@@ -245,22 +186,13 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = DateTime.UtcNow.AddDays(-10),
-                EndDate = DateTime.UtcNow.AddDays(20),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
-            var claim = new Claim
+            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 100001m)
             {
-                Id = "claim-1",
-                CoverId = coverId,
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 100001m,
-                Created = DateTime.UtcNow
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
@@ -278,22 +210,13 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = DateTime.UtcNow.AddDays(-10),
-                EndDate = DateTime.UtcNow.AddDays(20),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
-            var claim = new Claim
+            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 0m)
             {
-                Id = "claim-1",
-                CoverId = coverId,
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 0m,
-                Created = DateTime.UtcNow
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
@@ -310,22 +233,13 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = DateTime.UtcNow.AddDays(-10),
-                EndDate = DateTime.UtcNow.AddDays(20),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
-            var claim = new Claim
+            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 100000m)
             {
-                Id = "claim-1",
-                CoverId = coverId,
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 100000m,
-                Created = DateTime.UtcNow
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
@@ -346,22 +260,13 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
             {
-                Id = coverId,
-                StartDate = DateTime.UtcNow.AddDays(-10),
-                EndDate = DateTime.UtcNow.AddDays(20),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = coverId
             };
-            var claim = new Claim
+            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", claimType, 50000m)
             {
-                Id = "claim-1",
-                CoverId = coverId,
-                Name = "Test Claim",
-                Type = claimType,
-                DamageCost = 50000m,
-                Created = DateTime.UtcNow
+                Id = "claim-1"
             };
 
             _mockCoverRepository.Setup(r => r.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);

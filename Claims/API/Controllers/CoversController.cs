@@ -102,9 +102,6 @@ public class CoversController : ControllerBase
         try
         {
             var cover = _mapper.Map<Cover>(request);
-            cover.Id = Guid.NewGuid().ToString();
-            cover.Premium = _coverService.ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
-        
             await _coverService.Create(cover, cancellationToken);
             var response = _mapper.Map<CoverResponse>(cover);
         

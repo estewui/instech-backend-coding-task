@@ -31,14 +31,7 @@ namespace Claims.Tests.Infrastructure
         public async Task Create_ShouldAddClaimToDatabase()
         {
             // Arrange
-            var claim = new Claim
-            {
-                CoverId = "cover-1",
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 5000m,
-                Created = DateTime.UtcNow
-            };
+            var claim = new Claim("cover-1", DateTime.UtcNow, "Test Claim", ClaimType.Collision, 5000m);
 
             // Act
             var result = await _repository.Create(claim, CancellationToken.None);
@@ -54,14 +47,7 @@ namespace Claims.Tests.Infrastructure
         public async Task GetById_ShouldReturnClaim_WhenClaimExists()
         {
             // Arrange
-            var claim = new Claim
-            {
-                CoverId = "cover-1",
-                Name = "Test Claim",
-                Type = ClaimType.Fire,
-                DamageCost = 3000m,
-                Created = DateTime.UtcNow
-            };
+            var claim = new Claim("cover-1", DateTime.UtcNow, "Test Claim", ClaimType.Fire, 3000m);
             var createdClaim = await _repository.Create(claim, CancellationToken.None);
 
             // Act
@@ -77,8 +63,8 @@ namespace Claims.Tests.Infrastructure
         public async Task GetAll_ShouldReturnAllClaims()
         {
             // Arrange
-            var claim1 = new Claim { CoverId = "cover-1", Name = "Claim 1", Type = ClaimType.Grounding, DamageCost = 1000m, Created = DateTime.UtcNow };
-            var claim2 = new Claim { CoverId = "cover-2", Name = "Claim 2", Type = ClaimType.BadWeather, DamageCost = 2000m, Created = DateTime.UtcNow };
+            var claim1 = new Claim("cover-1", DateTime.UtcNow, "Claim 1", ClaimType.Grounding, 1000m);
+            var claim2 = new Claim("cover-2", DateTime.UtcNow, "Claim 2", ClaimType.BadWeather, 2000m);
             await _repository.Create(claim1, CancellationToken.None);
             await _repository.Create(claim2, CancellationToken.None);
 
@@ -94,14 +80,7 @@ namespace Claims.Tests.Infrastructure
         public async Task DeleteById_ShouldRemoveClaimFromDatabase()
         {
             // Arrange
-            var claim = new Claim
-            {
-                CoverId = "cover-1",
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 4000m,
-                Created = DateTime.UtcNow
-            };
+            var claim = new Claim("cover-1", DateTime.UtcNow, "Test Claim", ClaimType.Collision, 4000m);
             var createdClaim = await _repository.Create(claim, CancellationToken.None);
 
             // Act
@@ -121,6 +100,7 @@ namespace Claims.Tests.Infrastructure
             // Act & Assert
             await _repository.DeleteById(nonExistentId, CancellationToken.None); // Should not throw
         }
+        
         private static IMapper CreateMapper()
         {
             var config = new MapperConfiguration(cfg =>

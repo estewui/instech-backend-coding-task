@@ -29,14 +29,9 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var claimId = "claim-1";
-            var expectedClaim = new Claim
+            var expectedClaim = new Claim("cover-1", DateTime.UtcNow, "Test Claim", ClaimType.Collision, 5000m)
             {
-                Id = claimId,
-                CoverId = "cover-1",
-                Name = "Test Claim",
-                Type = ClaimType.Collision,
-                DamageCost = 5000m,
-                Created = DateTime.UtcNow
+                Id = claimId
             };
             _mockClaimRepository.Setup(r => r.GetById(claimId, CancellationToken.None)).ReturnsAsync(expectedClaim);
 
@@ -56,8 +51,8 @@ namespace Claims.Tests.Application
             // Arrange
             var expectedClaims = new List<Claim>
             {
-                new Claim { Id = "1", Name = "Claim 1", CoverId = "cover-1", Type = ClaimType.Fire, DamageCost = 1000m, Created = DateTime.UtcNow },
-                new Claim { Id = "2", Name = "Claim 2", CoverId = "cover-2", Type = ClaimType.Grounding, DamageCost = 2000m, Created = DateTime.UtcNow }
+                new Claim("cover-1", DateTime.UtcNow, "Claim 1", ClaimType.Fire, 1000m) { Id = "1" },
+                new Claim("cover-2", DateTime.UtcNow, "Claim 2", ClaimType.Grounding, 2000m) { Id = "2" }
             };
             _mockClaimRepository.Setup(r => r.GetAll(CancellationToken.None)).ReturnsAsync(expectedClaims);
 
@@ -74,14 +69,7 @@ namespace Claims.Tests.Application
         public async Task CreateClaimAsync_ShouldCreateClaim()
         {
             // Arrange
-            var newClaim = new Claim
-            {
-                CoverId = "cover-1",
-                Name = "New Claim",
-                Type = ClaimType.BadWeather,
-                DamageCost = 3000m,
-                Created = DateTime.UtcNow
-            };
+            var newClaim = new Claim("cover-1", DateTime.UtcNow, "New Claim", ClaimType.BadWeather, 3000m);
             _mockClaimRepository.Setup(r => r.Create(It.IsAny<Claim>(), CancellationToken.None)).ReturnsAsync(newClaim);
 
             // Act

@@ -40,8 +40,8 @@ namespace Claims.Tests.API
             // Arrange
             var claims = new List<Claim>
             {
-                new Claim { Id = "1", Name = "Claim 1", CoverId = "cover-1", Type = ClaimType.Fire, DamageCost = 1000m, Created = DateTime.UtcNow },
-                new Claim { Id = "2", Name = "Claim 2", CoverId = "cover-2", Type = ClaimType.Collision, DamageCost = 2000m, Created = DateTime.UtcNow }
+                new Claim("cover-1", DateTime.UtcNow, "Claim 1", ClaimType.Fire, 1000m) { Id = "1" },
+                new Claim("cover-2", DateTime.UtcNow, "Claim 2", ClaimType.Collision, 2000m) { Id = "2" }
             };
             _mockClaimService.Setup(s => s.GetClaimsAsync(CancellationToken.None)).ReturnsAsync(claims);
 
@@ -61,14 +61,9 @@ namespace Claims.Tests.API
         {
             // Arrange
             var claimId = "claim-1";
-            var claim = new Claim
+            var claim = new Claim("cover-1", DateTime.UtcNow, "Test Claim", ClaimType.BadWeather, 3000m)
             {
-                Id = claimId,
-                Name = "Test Claim",
-                CoverId = "cover-1",
-                Type = ClaimType.BadWeather,
-                DamageCost = 3000m,
-                Created = DateTime.UtcNow
+                Id = claimId
             };
             _mockClaimService.Setup(s => s.GetClaimByIdAsync(claimId, CancellationToken.None)).ReturnsAsync(claim);
 
@@ -108,14 +103,9 @@ namespace Claims.Tests.API
                 DamageCost = 5000m,
                 Created = DateTime.UtcNow
             };
-            var createdClaim = new Claim
+            var createdClaim = new Claim(request.CoverId, request.Created, request.Name, ClaimType.Collision, request.DamageCost)
             {
-                Id = Guid.NewGuid().ToString(),
-                CoverId = request.CoverId,
-                Name = request.Name,
-                Type = ClaimType.Collision,
-                DamageCost = request.DamageCost,
-                Created = request.Created
+                Id = Guid.NewGuid().ToString()
             };
             _mockClaimService.Setup(s => s.CreateClaimAsync(It.IsAny<Claim>(), CancellationToken.None)).ReturnsAsync(createdClaim);
 

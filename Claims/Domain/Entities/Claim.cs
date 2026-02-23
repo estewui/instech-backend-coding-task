@@ -2,6 +2,16 @@
 {
     public class Claim
     {
+        public Claim(string coverId, DateTime created, string name, ClaimType type, decimal damageCost)
+        {
+            Id = Guid.NewGuid().ToString();
+            CoverId = coverId;
+            Created = created;
+            Name = name;
+            Type = type;
+            DamageCost = damageCost;
+        }
+
         public string Id { get; set; } = string.Empty;
 
         public string CoverId { get; set; } = string.Empty;

@@ -2,6 +2,14 @@
 {
     public class Cover
     {
+        public Cover(DateTime startDate, DateTime endDate, CoverType type, decimal premium)
+        {
+            Id = Guid.NewGuid().ToString();
+            StartDate = startDate;
+            EndDate = endDate;
+            Type = type;
+            Premium = premium;
+        }
         public string Id { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

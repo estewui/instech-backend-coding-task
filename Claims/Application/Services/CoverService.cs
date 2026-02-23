@@ -36,6 +36,8 @@ namespace Application.Services
         {
             _validator.ValidateAndThrow(cover);
 
+            cover.Premium = ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
+
             return await _coverRepository.Create(cover, cancellationToken);
         }
 

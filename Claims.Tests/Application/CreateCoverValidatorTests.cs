@@ -19,13 +19,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldPass_WhenCoverIsValid()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(31), CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(1),
-                EndDate = DateTime.UtcNow.AddDays(31),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -39,13 +35,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldFail_WhenStartDateIsAfterEndDate()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(30), DateTime.UtcNow.AddDays(1), CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(30),
-                EndDate = DateTime.UtcNow.AddDays(1),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -61,13 +53,9 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var sameDate = DateTime.UtcNow.AddDays(10);
-            var cover = new Cover
+            var cover = new Cover(sameDate, sameDate, CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = sameDate,
-                EndDate = sameDate,
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -82,13 +70,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldFail_WhenStartDateIsInThePast()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(30), CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(-1),
-                EndDate = DateTime.UtcNow.AddDays(30),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -103,13 +87,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldFail_WhenStartDateIsNow()
         {
             // Arrange - DateTime.UtcNow in the validator will be slightly after this
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -124,13 +104,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldFail_WhenInsurancePeriodExceeds365Days()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(367), CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(1),
-                EndDate = DateTime.UtcNow.AddDays(367), // 366 days
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -148,13 +124,9 @@ namespace Claims.Tests.Application
             var startDate = DateTime.UtcNow.AddDays(1);
             var endDate = startDate.AddDays(365); // Exactly 365 days
             var a = (endDate - startDate).TotalDays; // Should be 366 days including the start date
-            var cover = new Cover
+            var cover = new Cover(startDate, endDate, CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = startDate,
-                EndDate = endDate,
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -168,13 +140,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldPass_WhenInsurancePeriodIsLessThan365Days()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(100), CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(1),
-                EndDate = DateTime.UtcNow.AddDays(100),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -188,13 +156,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldPass_WhenInsurancePeriodIs1Day()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(2), CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(1),
-                EndDate = DateTime.UtcNow.AddDays(2),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -213,13 +177,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldPass_ForAllCoverTypes(CoverType coverType)
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(31), coverType, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(1),
-                EndDate = DateTime.UtcNow.AddDays(31),
-                Type = coverType,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -233,13 +193,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldHaveMultipleErrors_WhenMultipleRulesFail()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(-20), CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(-10), // In the past
-                EndDate = DateTime.UtcNow.AddDays(-20), // Before start date and in the past
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -254,13 +210,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldFail_WhenBothDateValidationsAndPeriodValidationFail()
         {
             // Arrange - dates in past AND period exceeds 1 year
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(-400), DateTime.UtcNow.AddDays(-1), CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(-400),
-                EndDate = DateTime.UtcNow.AddDays(-1),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act
@@ -275,13 +227,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldPass_WhenCoverStartsInFutureAndEndsWithin365Days()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(10), DateTime.UtcNow.AddDays(100), CoverType.PassengerShip, 10000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(10),
-                EndDate = DateTime.UtcNow.AddDays(100),
-                Type = CoverType.PassengerShip,
-                Premium = 10000m
+                Id = "cover-1"
             };
 
             // Act
@@ -299,13 +247,9 @@ namespace Claims.Tests.Application
         public void Validate_ShouldPass_ForVariousValidDateRanges(int startDaysFromNow, int endDaysFromNow)
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow.AddDays(startDaysFromNow), DateTime.UtcNow.AddDays(endDaysFromNow), CoverType.Yacht, 5000m)
             {
-                Id = "cover-1",
-                StartDate = DateTime.UtcNow.AddDays(startDaysFromNow),
-                EndDate = DateTime.UtcNow.AddDays(endDaysFromNow),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = "cover-1"
             };
 
             // Act

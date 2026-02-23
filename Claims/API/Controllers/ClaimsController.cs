@@ -56,9 +56,7 @@ namespace API.Controllers
         {
             try
             {
-                var claim = _mapper.Map<Claim>(request);
-                claim.Id = Guid.NewGuid().ToString();
-            
+                var claim = _mapper.Map<Claim>(request);            
                 var createdClaim = await _claimService.CreateClaimAsync(claim, cancellationToken);
                 var response = _mapper.Map<ClaimResponse>(createdClaim);
             

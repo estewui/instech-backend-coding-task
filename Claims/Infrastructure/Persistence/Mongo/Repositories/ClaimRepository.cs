@@ -31,10 +31,9 @@ namespace Infrastructure.Persistence.Mongo.Repositories
 
         public async Task<DomainEntities.Claim> Create(DomainEntities.Claim claim, CancellationToken cancellationToken)
         {
-            claim.Id = Guid.NewGuid().ToString();
             var mongoClaim = _mapper.Map<MongoModels.Claim>(claim);
             await _db.AddItemAsync(mongoClaim);
-            return claim;
+            return _mapper.Map<DomainEntities.Claim>(mongoClaim);
         }
 
 

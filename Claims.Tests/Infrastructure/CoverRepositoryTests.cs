@@ -33,13 +33,9 @@ namespace Claims.Tests.Infrastructure
         public async Task Create_ShouldAddCoverToDatabase()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.Yacht, 5000m)
             {
-                Id = Guid.NewGuid().ToString(),
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30),
-                Type = CoverType.Yacht,
-                Premium = 5000m
+                Id = Guid.NewGuid().ToString()
             };
 
             // Act
@@ -55,13 +51,9 @@ namespace Claims.Tests.Infrastructure
         public async Task GetById_ShouldReturnCover_WhenCoverExists()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(60), CoverType.PassengerShip, 8000m)
             {
-                Id = Guid.NewGuid().ToString(),
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(60),
-                Type = CoverType.PassengerShip,
-                Premium = 8000m
+                Id = Guid.NewGuid().ToString()
             };
             await _repository.Create(cover, CancellationToken.None);
             await _context.SaveChangesAsync(CancellationToken.None);
@@ -92,8 +84,8 @@ namespace Claims.Tests.Infrastructure
         public async Task GetAll_ShouldReturnAllCovers()
         {
             // Arrange
-            var cover1 = new Cover { Id = Guid.NewGuid().ToString(), StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(30), Type = CoverType.Yacht, Premium = 1000m };
-            var cover2 = new Cover { Id = Guid.NewGuid().ToString(), StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(60), Type = CoverType.Tanker, Premium = 2000m };
+            var cover1 = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.Yacht, 1000m) { Id = Guid.NewGuid().ToString() };
+            var cover2 = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(60), CoverType.Tanker, 2000m) { Id = Guid.NewGuid().ToString() };
             await _repository.Create(cover1, CancellationToken.None);
             await _repository.Create(cover2, CancellationToken.None);
             await _context.SaveChangesAsync(CancellationToken.None);
@@ -110,13 +102,9 @@ namespace Claims.Tests.Infrastructure
         public async Task DeleteById_ShouldRemoveCoverFromDatabase()
         {
             // Arrange
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.ContainerShip, 6000m)
             {
-                Id = Guid.NewGuid().ToString(),
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30),
-                Type = CoverType.ContainerShip,
-                Premium = 6000m
+                Id = Guid.NewGuid().ToString()
             };
             await _repository.Create(cover, CancellationToken.None);
             await _context.SaveChangesAsync(CancellationToken.None);

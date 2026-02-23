@@ -13,6 +13,7 @@ using APIContractTypes = API.Contracts.Types;
 using Application.Common.Auditing;
 using Application.Services;
 using Domain.Entities;
+using Domain.Services;
 
 namespace Claims.Tests.API
 {
@@ -40,8 +41,8 @@ namespace Claims.Tests.API
             // Arrange
             var covers = new List<Cover>
             {
-                new Cover { Id = "1", Type = CoverType.Yacht, Premium = 1000m, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(30) },
-                new Cover { Id = "2", Type = CoverType.Tanker, Premium = 2000m, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(60) }
+                new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.Yacht, 1000m) { Id = "1" },
+                new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(60), CoverType.Tanker, 2000m) { Id = "2" }
             };
             _mockCoverService.Setup(s => s.GetAll(CancellationToken.None)).ReturnsAsync(covers);
 
@@ -59,13 +60,9 @@ namespace Claims.Tests.API
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover
+            var cover = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.PassengerShip, 5000m)
             {
-                Id = coverId,
-                Type = CoverType.PassengerShip,
-                Premium = 5000m,
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(30)
+                Id = coverId
             };
             _mockCoverService.Setup(s => s.GetById(coverId, CancellationToken.None)).ReturnsAsync(cover);
 
@@ -105,17 +102,16 @@ namespace Claims.Tests.API
                 Premium = 0 // Will be computed
             };
             var computedPremium = 41250m;
-            _mockCoverService.Setup(s => s.ComputePremium(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CoverType>()))
-                .Returns(computedPremium);
+            
             _mockCoverService.Setup(s => s.Create(It.IsAny<Cover>(), CancellationToken.None)).ReturnsAsync((Cover cover, CancellationToken ct) =>
             {
                 cover.Id = "new-cover-id";
+                cover.Premium = computedPremium;
                 return cover;
             });
 
             // Act
             var result = await _controller.CreateAsync(request, CancellationToken.None);
-
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var coverResponse = Assert.IsType<CoverResponse>(okResult.Value);
