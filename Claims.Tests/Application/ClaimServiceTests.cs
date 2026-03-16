@@ -82,14 +82,14 @@ namespace Claims.Tests.Application
         }
 
         [Fact]
-        public void DeleteClaimById_ShouldCallRepository()
+        public async Task DeleteClaimById_ShouldCallRepository()
         {
             // Arrange
             var claimId = "claim-1";
             _mockClaimRepository.Setup(r => r.DeleteById(claimId, CancellationToken.None)).Returns(Task.CompletedTask);
 
             // Act
-            _claimService.DeleteClaimById(claimId, CancellationToken.None);
+            await _claimService.DeleteClaimById(claimId, CancellationToken.None);
 
             // Assert
             _mockClaimRepository.Verify(r => r.DeleteById(claimId, CancellationToken.None), Times.Once);
