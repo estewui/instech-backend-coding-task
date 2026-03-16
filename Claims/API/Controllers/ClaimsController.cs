@@ -66,7 +66,7 @@ namespace API.Controllers
                     EntityId = createdClaim.Id,
                     HttpRequestType = "POST",
                     Timestamp = DateTime.UtcNow
-                });
+                }, cancellationToken);
             
                 return Ok(response);
             }

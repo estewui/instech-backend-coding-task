@@ -28,7 +28,7 @@ namespace Application.Services
 
         public async Task<Claim> CreateClaimAsync(Claim claim, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAndThrowAsync(claim);
+            await _validator.ValidateAndThrowAsync(claim, cancellationToken);
 
             return await _claimRepository.Create(claim, cancellationToken);
         }

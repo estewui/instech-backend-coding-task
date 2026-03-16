@@ -111,7 +111,7 @@ public class CoversController : ControllerBase
                 EntityId = cover.Id,
                 HttpRequestType = "POST",
                 Timestamp = DateTime.UtcNow
-            });
+            }, cancellationToken);
         
             return Ok(response);
         }
@@ -144,7 +144,7 @@ public class CoversController : ControllerBase
                 EntityId = id,
                 HttpRequestType = "DELETE",
                 Timestamp = DateTime.UtcNow
-            });
+            }, cancellationToken);
             return NoContent();
         }
         catch (Exception ex)

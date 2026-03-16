@@ -34,7 +34,7 @@ namespace Application.Services
 
         public async Task<Cover> Create(Cover cover, CancellationToken cancellationToken)
         {
-            _validator.ValidateAndThrow(cover);
+            await _validator.ValidateAndThrowAsync(cover, cancellationToken);
 
             cover.Premium = ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
 

@@ -19,20 +19,20 @@ namespace Infrastructure.Persistence.Mongo.Repositories
 
         public async Task<List<DomainEntities.Claim>> GetAll(CancellationToken cancellationToken)
         {
-            var mongoClaims = await _db.GetClaimsAsync();
+            var mongoClaims = await _db.GetClaimsAsync(cancellationToken);
             return _mapper.Map<List<DomainEntities.Claim>>(mongoClaims.ToList());
         }
 
         public async Task<DomainEntities.Claim?> GetById(string id, CancellationToken cancellationToken)
         {
-            var mongoClaim = await _db.GetClaimAsync(id);
+            var mongoClaim = await _db.GetClaimAsync(id, cancellationToken);
             return _mapper.Map<DomainEntities.Claim?>(mongoClaim);
         }
 
         public async Task<DomainEntities.Claim> Create(DomainEntities.Claim claim, CancellationToken cancellationToken)
         {
             var mongoClaim = _mapper.Map<MongoModels.Claim>(claim);
-            await _db.AddItemAsync(mongoClaim);
+            await _db.AddItemAsync(mongoClaim, cancellationToken);
             return _mapper.Map<DomainEntities.Claim>(mongoClaim);
         }
 
