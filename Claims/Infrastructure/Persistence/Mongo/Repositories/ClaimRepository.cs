@@ -39,7 +39,7 @@ namespace Infrastructure.Persistence.Mongo.Repositories
 
         public async Task DeleteById(string id, CancellationToken cancellationToken)
         {
-            await _db.DeleteItemAsync(id);
+            await _db.DeleteItemAsync(id, cancellationToken);
         }
     }
 }

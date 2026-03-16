@@ -21,9 +21,9 @@ namespace Application.Services
             return await _claimRepository.GetById(id, cancellationToken);
         }
 
-        public void DeleteClaimById(string id, CancellationToken cancellationToken)
+        public async Task DeleteClaimById(string id, CancellationToken cancellationToken)
         {
-            _claimRepository.DeleteById(id, cancellationToken);
+            await _claimRepository.DeleteById(id, cancellationToken);
         }
 
         public async Task<Claim> CreateClaimAsync(Claim claim, CancellationToken cancellationToken)

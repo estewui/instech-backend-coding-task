@@ -92,14 +92,14 @@ namespace API.Controllers
         {
             try
             {
-                _claimService.DeleteClaimById(id, cancellationToken);
+                await _claimService.DeleteClaimById(id, cancellationToken);
                 await _auditSink.EnqueueAsync(new AuditEvent
                 {
                     Type = AuditType.Claim,
                     EntityId = id,
                     HttpRequestType = "DELETE",
                     Timestamp = DateTime.UtcNow
-                });
+                }, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)

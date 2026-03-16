@@ -17,7 +17,7 @@ namespace Application.Services
         /// Deletes a claim by its identifier.
         /// </summary>
         /// <param name="id">The identifier of the claim to delete.</param>
-        void DeleteClaimById(string id, CancellationToken cancellationToken);
+        Task DeleteClaimById(string id, CancellationToken cancellationToken);
         /// <summary>
         /// Retrieves a claim by its identifier asynchronously.
         /// </summary>
