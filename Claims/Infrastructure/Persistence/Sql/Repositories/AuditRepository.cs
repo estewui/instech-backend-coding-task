@@ -29,7 +29,7 @@ namespace Infrastructure.Persistence.Sql.Repositories
         /// Audits a claim action.
         /// </summary>
         /// <param name="auditEvent">The audit event containing claim audit information.</param>
-        public void AuditClaim(AuditEvent auditEvent)
+        public async Task AuditClaim(AuditEvent auditEvent, CancellationToken ct)
         {
             var claimAudit = new SqlModels.ClaimAudit
             {
@@ -39,14 +39,14 @@ namespace Infrastructure.Persistence.Sql.Repositories
             };
 
             _db.Add(claimAudit);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync(ct);
         }
 
         /// <summary>
         /// Audits a cover action.
         /// </summary>
         /// <param name="auditEvent">The audit event containing cover audit information.</param>
-        public void AuditCover(AuditEvent auditEvent)
+        public async Task AuditCover(AuditEvent auditEvent, CancellationToken ct)
         {
             var coverAudit = new SqlModels.CoverAudit
             {
@@ -56,7 +56,7 @@ namespace Infrastructure.Persistence.Sql.Repositories
             };
 
             _db.Add(coverAudit);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync(ct);
         }
     }
 }

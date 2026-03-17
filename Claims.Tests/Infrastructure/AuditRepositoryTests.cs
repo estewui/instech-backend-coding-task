@@ -31,14 +31,14 @@ namespace Claims.Tests.Infrastructure
         }
 
         [Fact]
-        public void AuditClaim_ShouldAddClaimAuditToDatabase()
+        public async Task AuditClaim_ShouldAddClaimAuditToDatabase()
         {
             // Arrange
             var claimId = "claim-1";
             var httpRequestType = "POST";
 
             // Act
-            _repository.AuditClaim(new AuditEvent { EntityId = claimId, HttpRequestType = httpRequestType, Timestamp = DateTime.Now });
+            await _repository.AuditClaim(new AuditEvent { EntityId = claimId, HttpRequestType = httpRequestType, Timestamp = DateTime.Now }, CancellationToken.None);
 
             // Assert
             var audits = _context.ClaimAudits.ToList();
@@ -49,14 +49,14 @@ namespace Claims.Tests.Infrastructure
         }
 
         [Fact]
-        public void AuditCover_ShouldAddCoverAuditToDatabase()
+        public async Task AuditCover_ShouldAddCoverAuditToDatabase()
         {
             // Arrange
             var coverId = "cover-1";
             var httpRequestType = "DELETE";
 
             // Act
-            _repository.AuditCover(new AuditEvent { EntityId = coverId, HttpRequestType = httpRequestType, Timestamp = DateTime.Now });
+            await _repository.AuditCover(new AuditEvent { EntityId = coverId, HttpRequestType = httpRequestType, Timestamp = DateTime.Now }, CancellationToken.None);
 
             // Assert
             var audits = _context.CoverAudits.ToList();
@@ -67,15 +67,15 @@ namespace Claims.Tests.Infrastructure
         }
 
         [Fact]
-        public void AuditClaim_ShouldAddMultipleAudits()
+        public async Task AuditClaim_ShouldAddMultipleAudits()
         {
             // Arrange
             var claimId1 = "claim-1";
             var claimId2 = "claim-2";
 
             // Act
-            _repository.AuditClaim(new AuditEvent { EntityId = claimId1, HttpRequestType = "POST", Timestamp = DateTime.Now });
-            _repository.AuditClaim(new AuditEvent { EntityId = claimId2, HttpRequestType = "DELETE", Timestamp = DateTime.Now });
+            await _repository.AuditClaim(new AuditEvent { EntityId = claimId1, HttpRequestType = "POST", Timestamp = DateTime.Now }, CancellationToken.None);
+            await _repository.AuditClaim(new AuditEvent { EntityId = claimId2, HttpRequestType = "DELETE", Timestamp = DateTime.Now }, CancellationToken.None);
 
             // Assert
             var audits = _context.ClaimAudits.ToList();
@@ -83,15 +83,15 @@ namespace Claims.Tests.Infrastructure
         }
 
         [Fact]
-        public void AuditCover_ShouldAddMultipleAudits()
+        public async Task AuditCover_ShouldAddMultipleAudits()
         {
             // Arrange
             var coverId1 = "cover-1";
             var coverId2 = "cover-2";
 
             // Act
-            _repository.AuditCover(new AuditEvent { EntityId = coverId1, HttpRequestType = "POST", Timestamp = DateTime.Now });
-            _repository.AuditCover(new AuditEvent { EntityId = coverId2, HttpRequestType = "DELETE", Timestamp = DateTime.Now });
+            await _repository.AuditCover(new AuditEvent { EntityId = coverId1, HttpRequestType = "POST", Timestamp = DateTime.Now }, CancellationToken.None);
+            await _repository.AuditCover(new AuditEvent { EntityId = coverId2, HttpRequestType = "DELETE", Timestamp = DateTime.Now }, CancellationToken.None);
 
             // Assert
             var audits = _context.CoverAudits.ToList();
@@ -103,13 +103,13 @@ namespace Claims.Tests.Infrastructure
         [InlineData("DELETE")]
         [InlineData("PUT")]
         [InlineData("GET")]
-        public void AuditClaim_ShouldSupportDifferentHttpMethods(string httpMethod)
+        public async Task AuditClaim_ShouldSupportDifferentHttpMethods(string httpMethod)
         {
             // Arrange
             var claimId = "claim-1";
 
             // Act
-            _repository.AuditClaim(new AuditEvent { EntityId = claimId, HttpRequestType = httpMethod, Timestamp = DateTime.Now });
+            await _repository.AuditClaim(new AuditEvent { EntityId = claimId, HttpRequestType = httpMethod, Timestamp = DateTime.Now }, CancellationToken.None);
 
             // Assert
             var audit = _context.ClaimAudits.First();
@@ -121,13 +121,13 @@ namespace Claims.Tests.Infrastructure
         [InlineData("DELETE")]
         [InlineData("PUT")]
         [InlineData("GET")]
-        public void AuditCover_ShouldSupportDifferentHttpMethods(string httpMethod)
+        public async Task AuditCover_ShouldSupportDifferentHttpMethods(string httpMethod)
         {
             // Arrange
             var coverId = "cover-1";
 
             // Act
-            _repository.AuditCover(new AuditEvent { EntityId = coverId, HttpRequestType = httpMethod, Timestamp = DateTime.Now });
+            await _repository.AuditCover(new AuditEvent { EntityId = coverId, HttpRequestType = httpMethod, Timestamp = DateTime.Now }, CancellationToken.None);
 
             // Assert
             var audit = _context.CoverAudits.First();

@@ -11,11 +11,11 @@ namespace Application.Abstractions.Persistence
         /// Audits a claim action.
         /// </summary>
         /// <param name="auditEvent">The audit event.</param>
-        void AuditClaim(AuditEvent auditEvent);
+        Task AuditClaim(AuditEvent auditEven, CancellationToken ct);
         /// <summary>
         /// Audits a cover action.
         /// </summary>
         /// <param name="auditEvent">The audit event.</param>
-        void AuditCover(AuditEvent auditEvent);
+        Task AuditCover(AuditEvent auditEvent, CancellationToken ct);
     }
 }

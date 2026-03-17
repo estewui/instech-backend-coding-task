@@ -4,7 +4,7 @@ namespace Application.Services
 {
     public interface IAuditService
     {
-        void AuditClaim(AuditEvent auditEvent);
-        void AuditCover(AuditEvent auditEvent);
+        Task AuditClaim(AuditEvent auditEvent, CancellationToken ct);
+        Task AuditCover(AuditEvent auditEvent, CancellationToken ct);
     }
 }

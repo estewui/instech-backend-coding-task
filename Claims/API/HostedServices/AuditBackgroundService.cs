@@ -43,10 +43,10 @@ namespace API.HostedServices
                         switch (auditEvent.Type)
                         {
                             case AuditType.Claim:
-                                auditService.AuditClaim(auditEvent);
+                                await auditService.AuditClaim(auditEvent, stoppingToken);
                                 break;
                             case AuditType.Cover:
-                                auditService.AuditCover(auditEvent);
+                                await auditService.AuditCover(auditEvent, stoppingToken);
                                 break;
                             default:
                                 throw new Exception($"Unknown audit type: {auditEvent.Type}");
