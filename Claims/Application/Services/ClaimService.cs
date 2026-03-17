@@ -32,8 +32,7 @@ namespace Application.Services
             {
                 Type = AuditType.Claim,
                 EntityId = id,
-                HttpRequestType = "DELETE",
-                Timestamp = DateTime.UtcNow
+                HttpRequestType = "DELETE"
             }, cancellationToken);
         }
 
@@ -52,8 +51,7 @@ namespace Application.Services
             {
                 Type = AuditType.Claim,
                 EntityId = created.Id,
-                HttpRequestType = "POST",
-                Timestamp = DateTime.UtcNow
+                HttpRequestType = "POST"
             }, cancellationToken);
 
             return created;

@@ -10,7 +10,7 @@
     {
         public AuditType Type { get; set; }
         public string? EntityId { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         public required string HttpRequestType { get; set; }
     }
 }

@@ -43,8 +43,7 @@ namespace Application.Services
             {
                 Type = AuditType.Cover,
                 EntityId = created.Id,
-                HttpRequestType = "POST",
-                Timestamp = DateTime.UtcNow
+                HttpRequestType = "POST"
             }, cancellationToken);
 
             return created;
@@ -58,8 +57,7 @@ namespace Application.Services
             {
                 Type = AuditType.Cover,
                 EntityId = id,
-                HttpRequestType = "DELETE",
-                Timestamp = DateTime.UtcNow
+                HttpRequestType = "DELETE"
             }, cancellationToken);
         }
     }
