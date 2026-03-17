@@ -11,12 +11,14 @@ namespace Application.Services
         private readonly IClaimRepository _claimRepository;
         private readonly ICoverRepository _coverRepository;
         private readonly IAuditSink _auditSink;
+        private readonly IValidator<Claim> _validator;
 
-        public ClaimService(IClaimRepository claimRepository, ICoverRepository coverRepository, IAuditSink auditSink)
+        public ClaimService(IClaimRepository claimRepository, ICoverRepository coverRepository, IAuditSink auditSink, IValidator<Claim> validator)
         {
             _claimRepository = claimRepository;
             _coverRepository = coverRepository;
             _auditSink = auditSink;
+            _validator = validator;
         }
 
         public async Task<Claim?> GetClaimByIdAsync(string id, CancellationToken cancellationToken)
@@ -38,12 +40,7 @@ namespace Application.Services
 
         public async Task<Claim> CreateClaimAsync(Claim claim, CancellationToken cancellationToken)
         {
-            var cover = await _coverRepository.GetById(claim.CoverId, cancellationToken);
-            if (cover is null)
-                throw new InvalidOperationException("Cover not found.");
-
-            if (claim.Created < cover.StartDate || claim.Created > cover.EndDate)
-                throw new InvalidOperationException("Created date must be within the period of the related Cover.");
+            await _validator.ValidateAndThrowAsync(claim);
 
             var created = await _claimRepository.Create(claim, cancellationToken);
 

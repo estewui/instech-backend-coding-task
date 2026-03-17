@@ -49,7 +49,7 @@ namespace API.HostedServices
 
             if (buffer.Count > 0)
             {
-                _logger.LogInformation("Draining {Count} remaining audit event(s) on shutdown.", buffer.Count);
+                _logger.LogInformation($"Draining {buffer.Count} remaining audit event(s) on shutdown.");
                 await FlushBufferAsync(buffer);
             }
         }
@@ -72,7 +72,7 @@ namespace API.HostedServices
                             await auditService.AuditCover(auditEvent, CancellationToken.None);
                             break;
                         default:
-                            _logger.LogWarning("Unknown audit type: {AuditType}", auditEvent.Type);
+                            _logger.LogWarning($"Unknown audit type: {auditEvent.Type}");
                             break;
                     }
                 }

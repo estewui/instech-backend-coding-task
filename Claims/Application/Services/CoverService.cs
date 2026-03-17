@@ -11,11 +11,13 @@ namespace Application.Services
     {
         private readonly ICoverRepository _coverRepository;
         private readonly IAuditSink _auditSink;
+        private readonly IValidator<Cover> _validator;
 
-        public CoverService(ICoverRepository coverRepository, IAuditSink auditSink)
+        public CoverService(ICoverRepository coverRepository, IAuditSink auditSink, IValidator<Cover> validator)
         {
             _coverRepository = coverRepository;
             _auditSink = auditSink;
+            _validator = validator;
         }
 
         public decimal ComputePremium(DateTime startDate, DateTime endDate, CoverType coverType)
@@ -35,6 +37,8 @@ namespace Application.Services
 
         public async Task<Cover> Create(Cover cover, CancellationToken cancellationToken)
         {
+            await _validator.ValidateAndThrowAsync(cover);
+
             cover.Premium = ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
 
             var created = await _coverRepository.Create(cover, cancellationToken);
