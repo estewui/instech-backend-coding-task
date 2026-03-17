@@ -23,15 +23,13 @@ namespace Claims.Tests.API
     {
         private readonly Mock<ILogger<ClaimsController>> _mockLogger;
         private readonly Mock<IClaimService> _mockClaimService;
-        private readonly Mock<IAuditSink> _mockAuditSink;
         private readonly ClaimsController _controller;
 
         public ClaimsControllerTests()
         {
             _mockLogger = new Mock<ILogger<ClaimsController>>();
             _mockClaimService = new Mock<IClaimService>();
-            _mockAuditSink = new Mock<IAuditSink>();
-            _controller = new ClaimsController(_mockLogger.Object, _mockClaimService.Object, _mockAuditSink.Object, CreateMapper());
+            _controller = new ClaimsController(_mockLogger.Object, _mockClaimService.Object, CreateMapper());
         }
 
         [Fact]

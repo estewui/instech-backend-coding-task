@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.Common.Auditing;
+using FluentValidation;
 
 using Application.Abstractions.Persistence;
 using Domain.Entities;
@@ -6,15 +7,15 @@ using Domain.Services;
 
 namespace Application.Services
 {
-    public class CoverService: ICoverService
+    public class CoverService : ICoverService
     {
         private readonly ICoverRepository _coverRepository;
-        private readonly IValidator<Cover> _validator;
+        private readonly IAuditSink _auditSink;
 
-        public CoverService(ICoverRepository coverRepository, IValidator<Cover> validator)
+        public CoverService(ICoverRepository coverRepository, IAuditSink auditSink)
         {
             _coverRepository = coverRepository;
-            _validator = validator;
+            _auditSink = auditSink;
         }
 
         public decimal ComputePremium(DateTime startDate, DateTime endDate, CoverType coverType)
@@ -34,16 +35,32 @@ namespace Application.Services
 
         public async Task<Cover> Create(Cover cover, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAndThrowAsync(cover, cancellationToken);
-
             cover.Premium = ComputePremium(cover.StartDate, cover.EndDate, cover.Type);
 
-            return await _coverRepository.Create(cover, cancellationToken);
+            var created = await _coverRepository.Create(cover, cancellationToken);
+
+            await _auditSink.EnqueueAsync(new AuditEvent
+            {
+                Type = AuditType.Cover,
+                EntityId = created.Id,
+                HttpRequestType = "POST",
+                Timestamp = DateTime.UtcNow
+            }, cancellationToken);
+
+            return created;
         }
 
-        public Task DeleteById(string id, CancellationToken cancellationToken)
+        public async Task DeleteById(string id, CancellationToken cancellationToken)
         {
-            return _coverRepository.DeleteById(id, cancellationToken);
+            await _coverRepository.DeleteById(id, cancellationToken);
+
+            await _auditSink.EnqueueAsync(new AuditEvent
+            {
+                Type = AuditType.Cover,
+                EntityId = id,
+                HttpRequestType = "DELETE",
+                Timestamp = DateTime.UtcNow
+            }, cancellationToken);
         }
     }
 }

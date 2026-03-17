@@ -3,6 +3,7 @@ using Moq;
 using Xunit;
 
 using Application.Abstractions.Persistence;
+using Application.Common.Auditing;
 using Application.Services;
 using Domain.Entities;
 
@@ -14,14 +15,14 @@ namespace Claims.Tests.Application
     public class CoverServiceTests
     {
         private readonly Mock<ICoverRepository> _mockCoverRepository;
-        private readonly Mock<IValidator<Cover>> _mockValidator;
+        private readonly Mock<IAuditSink> _mockAuditSink;
         private readonly CoverService _coverService;
 
         public CoverServiceTests()
         {
             _mockCoverRepository = new Mock<ICoverRepository>();
-            _mockValidator = new Mock<IValidator<Cover>>();
-            _coverService = new CoverService(_mockCoverRepository.Object, _mockValidator.Object);
+            _mockAuditSink = new Mock<IAuditSink>();
+            _coverService = new CoverService(_mockCoverRepository.Object, _mockAuditSink.Object);
         }
 
         [Fact]
@@ -66,10 +67,10 @@ namespace Claims.Tests.Application
         }
 
         [Fact]
-        public async Task Create_ShouldCreateCover()
+        public async Task Create_ShouldCreateCoverAndAudit()
         {
             // Arrange
-            var newCover = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.PassengerShip, 3000m)
+            var newCover = new Cover(DateTime.UtcNow, DateTime.UtcNow.AddDays(30), CoverType.PassengerShip, 0m)
             {
                 Id = Guid.NewGuid().ToString()
             };
@@ -82,10 +83,11 @@ namespace Claims.Tests.Application
             Assert.NotNull(result);
             Assert.Equal(CoverType.PassengerShip, result.Type);
             _mockCoverRepository.Verify(r => r.Create(It.IsAny<Cover>(), CancellationToken.None), Times.Once);
+            _mockAuditSink.Verify(a => a.EnqueueAsync(It.Is<AuditEvent>(e => e.Type == AuditType.Cover && e.HttpRequestType == "POST"), CancellationToken.None), Times.Once);
         }
 
         [Fact]
-        public async Task DeleteById_ShouldCallRepository()
+        public async Task DeleteById_ShouldCallRepositoryAndAudit()
         {
             // Arrange
             var coverId = "cover-1";
@@ -96,6 +98,7 @@ namespace Claims.Tests.Application
 
             // Assert
             _mockCoverRepository.Verify(r => r.DeleteById(coverId, CancellationToken.None), Times.Once);
+            _mockAuditSink.Verify(a => a.EnqueueAsync(It.Is<AuditEvent>(e => e.Type == AuditType.Cover && e.HttpRequestType == "DELETE" && e.EntityId == coverId), CancellationToken.None), Times.Once);
         }
     }
 }

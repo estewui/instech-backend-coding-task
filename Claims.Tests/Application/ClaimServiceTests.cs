@@ -3,6 +3,7 @@ using Moq;
 using Xunit;
 
 using Application.Abstractions.Persistence;
+using Application.Common.Auditing;
 using Application.Services;
 using Domain.Entities;
 
@@ -14,14 +15,16 @@ namespace Claims.Tests.Application
     public class ClaimServiceTests
     {
         private readonly Mock<IClaimRepository> _mockClaimRepository;
-        private readonly Mock<IValidator<Claim>> _mockValidator;
+        private readonly Mock<ICoverRepository> _mockCoverRepository;
+        private readonly Mock<IAuditSink> _mockAuditSink;
         private readonly ClaimService _claimService;
 
         public ClaimServiceTests()
         {
             _mockClaimRepository = new Mock<IClaimRepository>();
-            _mockValidator = new Mock<IValidator<Claim>>();
-            _claimService = new ClaimService(_mockClaimRepository.Object, _mockValidator.Object);
+            _mockCoverRepository = new Mock<ICoverRepository>();
+            _mockAuditSink = new Mock<IAuditSink>();
+            _claimService = new ClaimService(_mockClaimRepository.Object, _mockCoverRepository.Object, _mockAuditSink.Object);
         }
 
         [Fact]
@@ -66,10 +69,14 @@ namespace Claims.Tests.Application
         }
 
         [Fact]
-        public async Task CreateClaimAsync_ShouldCreateClaim()
+        public async Task CreateClaimAsync_ShouldCreateClaimAndAudit_WhenCoverExistsAndDateIsValid()
         {
             // Arrange
-            var newClaim = new Claim("cover-1", DateTime.UtcNow, "New Claim", ClaimType.BadWeather, 3000m);
+            var now = DateTime.UtcNow;
+            var cover = new Cover(now.AddDays(-10), now.AddDays(20), CoverType.Yacht, 5000m) { Id = "cover-1" };
+            var newClaim = new Claim("cover-1", now, "New Claim", ClaimType.BadWeather, 3000m);
+
+            _mockCoverRepository.Setup(r => r.GetById("cover-1", CancellationToken.None)).ReturnsAsync(cover);
             _mockClaimRepository.Setup(r => r.Create(It.IsAny<Claim>(), CancellationToken.None)).ReturnsAsync(newClaim);
 
             // Act
@@ -79,10 +86,11 @@ namespace Claims.Tests.Application
             Assert.NotNull(result);
             Assert.Equal("New Claim", result.Name);
             _mockClaimRepository.Verify(r => r.Create(It.IsAny<Claim>(), CancellationToken.None), Times.Once);
+            _mockAuditSink.Verify(a => a.EnqueueAsync(It.Is<AuditEvent>(e => e.Type == AuditType.Claim && e.HttpRequestType == "POST"), CancellationToken.None), Times.Once);
         }
 
         [Fact]
-        public async Task DeleteClaimById_ShouldCallRepository()
+        public async Task DeleteClaimById_ShouldCallRepositoryAndAudit()
         {
             // Arrange
             var claimId = "claim-1";
@@ -93,6 +101,7 @@ namespace Claims.Tests.Application
 
             // Assert
             _mockClaimRepository.Verify(r => r.DeleteById(claimId, CancellationToken.None), Times.Once);
+            _mockAuditSink.Verify(a => a.EnqueueAsync(It.Is<AuditEvent>(e => e.Type == AuditType.Claim && e.HttpRequestType == "DELETE" && e.EntityId == claimId), CancellationToken.None), Times.Once);
         }
     }
 }
