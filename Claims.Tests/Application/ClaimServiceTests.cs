@@ -17,6 +17,7 @@ namespace Claims.Tests.Application
         private readonly Mock<IClaimRepository> _mockClaimRepository;
         private readonly Mock<ICoverRepository> _mockCoverRepository;
         private readonly Mock<IAuditSink> _mockAuditSink;
+        private readonly Mock<IValidator<Claim>> _mockValidator;
         private readonly ClaimService _claimService;
 
         public ClaimServiceTests()
@@ -24,7 +25,8 @@ namespace Claims.Tests.Application
             _mockClaimRepository = new Mock<IClaimRepository>();
             _mockCoverRepository = new Mock<ICoverRepository>();
             _mockAuditSink = new Mock<IAuditSink>();
-            _claimService = new ClaimService(_mockClaimRepository.Object, _mockCoverRepository.Object, _mockAuditSink.Object);
+            _mockValidator = new Mock<IValidator<Claim>>();
+            _claimService = new ClaimService(_mockClaimRepository.Object, _mockCoverRepository.Object, _mockAuditSink.Object, _mockValidator.Object);
         }
 
         [Fact]

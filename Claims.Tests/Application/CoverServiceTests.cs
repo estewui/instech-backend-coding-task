@@ -16,13 +16,15 @@ namespace Claims.Tests.Application
     {
         private readonly Mock<ICoverRepository> _mockCoverRepository;
         private readonly Mock<IAuditSink> _mockAuditSink;
+        private readonly Mock<IValidator<Cover>> _mockValidator;
         private readonly CoverService _coverService;
 
         public CoverServiceTests()
         {
             _mockCoverRepository = new Mock<ICoverRepository>();
             _mockAuditSink = new Mock<IAuditSink>();
-            _coverService = new CoverService(_mockCoverRepository.Object, _mockAuditSink.Object);
+            _mockValidator = new Mock<IValidator<Cover>>();
+            _coverService = new CoverService(_mockCoverRepository.Object, _mockAuditSink.Object, _mockValidator.Object);
         }
 
         [Fact]

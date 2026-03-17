@@ -15,6 +15,7 @@ namespace Claims.Tests.Infrastructure
     /// </summary>
     public class AuditRepositoryTests
     {
+        private static readonly DateTime FixedNow = new(2025, 6, 15, 12, 0, 0, DateTimeKind.Utc);
         private readonly AuditContext _context;
         private readonly AuditRepository _repository;
         private readonly Mock<IMapper> _mockMapper;
@@ -38,14 +39,14 @@ namespace Claims.Tests.Infrastructure
             var httpRequestType = "POST";
 
             // Act
-            await _repository.AuditClaim(new AuditEvent { EntityId = claimId, HttpRequestType = httpRequestType, Timestamp = DateTime.Now }, CancellationToken.None);
+            await _repository.AuditClaim(new AuditEvent { EntityId = claimId, HttpRequestType = httpRequestType, Timestamp = FixedNow }, CancellationToken.None);
 
             // Assert
             var audits = _context.ClaimAudits.ToList();
             Assert.Single(audits);
             Assert.Equal(claimId, audits[0].ClaimId);
             Assert.Equal(httpRequestType, audits[0].HttpRequestType);
-            Assert.True(audits[0].Created <= DateTime.Now);
+            Assert.Equal(FixedNow, audits[0].Created);
         }
 
         [Fact]
@@ -56,14 +57,14 @@ namespace Claims.Tests.Infrastructure
             var httpRequestType = "DELETE";
 
             // Act
-            await _repository.AuditCover(new AuditEvent { EntityId = coverId, HttpRequestType = httpRequestType, Timestamp = DateTime.Now }, CancellationToken.None);
+            await _repository.AuditCover(new AuditEvent { EntityId = coverId, HttpRequestType = httpRequestType, Timestamp = FixedNow }, CancellationToken.None);
 
             // Assert
             var audits = _context.CoverAudits.ToList();
             Assert.Single(audits);
             Assert.Equal(coverId, audits[0].CoverId);
             Assert.Equal(httpRequestType, audits[0].HttpRequestType);
-            Assert.True(audits[0].Created <= DateTime.Now);
+            Assert.Equal(FixedNow, audits[0].Created);
         }
 
         [Fact]
@@ -74,8 +75,8 @@ namespace Claims.Tests.Infrastructure
             var claimId2 = "claim-2";
 
             // Act
-            await _repository.AuditClaim(new AuditEvent { EntityId = claimId1, HttpRequestType = "POST", Timestamp = DateTime.Now }, CancellationToken.None);
-            await _repository.AuditClaim(new AuditEvent { EntityId = claimId2, HttpRequestType = "DELETE", Timestamp = DateTime.Now }, CancellationToken.None);
+            await _repository.AuditClaim(new AuditEvent { EntityId = claimId1, HttpRequestType = "POST", Timestamp = FixedNow }, CancellationToken.None);
+            await _repository.AuditClaim(new AuditEvent { EntityId = claimId2, HttpRequestType = "DELETE", Timestamp = FixedNow }, CancellationToken.None);
 
             // Assert
             var audits = _context.ClaimAudits.ToList();
@@ -90,8 +91,8 @@ namespace Claims.Tests.Infrastructure
             var coverId2 = "cover-2";
 
             // Act
-            await _repository.AuditCover(new AuditEvent { EntityId = coverId1, HttpRequestType = "POST", Timestamp = DateTime.Now }, CancellationToken.None);
-            await _repository.AuditCover(new AuditEvent { EntityId = coverId2, HttpRequestType = "DELETE", Timestamp = DateTime.Now }, CancellationToken.None);
+            await _repository.AuditCover(new AuditEvent { EntityId = coverId1, HttpRequestType = "POST", Timestamp = FixedNow }, CancellationToken.None);
+            await _repository.AuditCover(new AuditEvent { EntityId = coverId2, HttpRequestType = "DELETE", Timestamp = FixedNow }, CancellationToken.None);
 
             // Assert
             var audits = _context.CoverAudits.ToList();
@@ -109,7 +110,7 @@ namespace Claims.Tests.Infrastructure
             var claimId = "claim-1";
 
             // Act
-            await _repository.AuditClaim(new AuditEvent { EntityId = claimId, HttpRequestType = httpMethod, Timestamp = DateTime.Now }, CancellationToken.None);
+            await _repository.AuditClaim(new AuditEvent { EntityId = claimId, HttpRequestType = httpMethod, Timestamp = FixedNow }, CancellationToken.None);
 
             // Assert
             var audit = _context.ClaimAudits.First();
@@ -127,7 +128,7 @@ namespace Claims.Tests.Infrastructure
             var coverId = "cover-1";
 
             // Act
-            await _repository.AuditCover(new AuditEvent { EntityId = coverId, HttpRequestType = httpMethod, Timestamp = DateTime.Now }, CancellationToken.None);
+            await _repository.AuditCover(new AuditEvent { EntityId = coverId, HttpRequestType = httpMethod, Timestamp = FixedNow }, CancellationToken.None);
 
             // Assert
             var audit = _context.CoverAudits.First();

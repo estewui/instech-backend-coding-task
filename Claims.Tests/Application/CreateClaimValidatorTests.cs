@@ -10,6 +10,7 @@ namespace Claims.Tests.Application
 {
     public class CreateClaimValidatorTests
     {
+        private static readonly DateTime FixedNow = new(2025, 6, 15, 12, 0, 0, DateTimeKind.Utc);
         private readonly Mock<ICoverRepository> _mockCoverRepository;
         private readonly CreateClaimValidator _validator;
 
@@ -24,11 +25,11 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
+            var cover = new Cover(FixedNow.AddDays(-10), FixedNow.AddDays(20), CoverType.Yacht, 5000m)
             {
                 Id = coverId
             };
-            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 50000m)
+            var claim = new Claim(coverId, FixedNow, "Test Claim", ClaimType.Collision, 50000m)
             {
                 Id = "claim-1"
             };
@@ -46,7 +47,7 @@ namespace Claims.Tests.Application
         public async Task Validate_ShouldFail_WhenCoverDoesNotExist()
         {
             // Arrange
-            var claim = new Claim("non-existent-cover", DateTime.UtcNow, "Test Claim", ClaimType.Collision, 50000m)
+            var claim = new Claim("non-existent-cover", FixedNow, "Test Claim", ClaimType.Collision, 50000m)
             {
                 Id = "claim-1"
             };
@@ -66,11 +67,11 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover(DateTime.UtcNow.AddDays(5), DateTime.UtcNow.AddDays(35), CoverType.Yacht, 5000m)
+            var cover = new Cover(FixedNow.AddDays(5), FixedNow.AddDays(35), CoverType.Yacht, 5000m)
             {
                 Id = coverId
             };
-            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 50000m)
+            var claim = new Claim(coverId, FixedNow, "Test Claim", ClaimType.Collision, 50000m)
             {
                 Id = "claim-1"
             };
@@ -90,11 +91,11 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover(DateTime.UtcNow.AddDays(-30), DateTime.UtcNow.AddDays(-5), CoverType.Yacht, 5000m)
+            var cover = new Cover(FixedNow.AddDays(-30), FixedNow.AddDays(-5), CoverType.Yacht, 5000m)
             {
                 Id = coverId
             };
-            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 50000m)
+            var claim = new Claim(coverId, FixedNow, "Test Claim", ClaimType.Collision, 50000m)
             {
                 Id = "claim-1"
             };
@@ -114,7 +115,7 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var startDate = DateTime.UtcNow.Date;
+            var startDate = FixedNow;
             var cover = new Cover(startDate, startDate.AddDays(30), CoverType.Yacht, 5000m)
             {
                 Id = coverId
@@ -138,8 +139,8 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var endDate = DateTime.UtcNow.Date.AddDays(30);
-            var cover = new Cover(DateTime.UtcNow.Date, endDate, CoverType.Yacht, 5000m)
+            var endDate = FixedNow.AddDays(30);
+            var cover = new Cover(FixedNow, endDate, CoverType.Yacht, 5000m)
             {
                 Id = coverId
             };
@@ -162,11 +163,11 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
+            var cover = new Cover(FixedNow.AddDays(-10), FixedNow.AddDays(20), CoverType.Yacht, 5000m)
             {
                 Id = coverId
             };
-            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, -1000m)
+            var claim = new Claim(coverId, FixedNow, "Test Claim", ClaimType.Collision, -1000m)
             {
                 Id = "claim-1"
             };
@@ -186,11 +187,11 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
+            var cover = new Cover(FixedNow.AddDays(-10), FixedNow.AddDays(20), CoverType.Yacht, 5000m)
             {
                 Id = coverId
             };
-            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 100001m)
+            var claim = new Claim(coverId, FixedNow, "Test Claim", ClaimType.Collision, 100001m)
             {
                 Id = "claim-1"
             };
@@ -210,11 +211,11 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
+            var cover = new Cover(FixedNow.AddDays(-10), FixedNow.AddDays(20), CoverType.Yacht, 5000m)
             {
                 Id = coverId
             };
-            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 0m)
+            var claim = new Claim(coverId, FixedNow, "Test Claim", ClaimType.Collision, 0m)
             {
                 Id = "claim-1"
             };
@@ -234,11 +235,11 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
+            var cover = new Cover(FixedNow.AddDays(-10), FixedNow.AddDays(20), CoverType.Yacht, 5000m)
             {
                 Id = coverId
             };
-            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", ClaimType.Collision, 100000m)
+            var claim = new Claim(coverId, FixedNow, "Test Claim", ClaimType.Collision, 100000m)
             {
                 Id = "claim-1"
             };
@@ -261,11 +262,11 @@ namespace Claims.Tests.Application
         {
             // Arrange
             var coverId = "cover-1";
-            var cover = new Cover(DateTime.UtcNow.AddDays(-10), DateTime.UtcNow.AddDays(20), CoverType.Yacht, 5000m)
+            var cover = new Cover(FixedNow.AddDays(-10), FixedNow.AddDays(20), CoverType.Yacht, 5000m)
             {
                 Id = coverId
             };
-            var claim = new Claim(coverId, DateTime.UtcNow, "Test Claim", claimType, 50000m)
+            var claim = new Claim(coverId, FixedNow, "Test Claim", claimType, 50000m)
             {
                 Id = "claim-1"
             };
