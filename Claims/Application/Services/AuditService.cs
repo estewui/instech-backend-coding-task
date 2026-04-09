@@ -10,14 +10,14 @@ namespace Application.Services
         {
             _audit = audit;
         }
-        public void AuditClaim(AuditEvent auditEvent)
+        public async Task AuditClaim(AuditEvent auditEvent, CancellationToken ct)
         {
-            _audit.AuditClaim(auditEvent);
+            await _audit.AuditClaim(auditEvent, ct);
         }
 
-        public void AuditCover(AuditEvent auditEvent)
+        public async Task AuditCover(AuditEvent auditEvent, CancellationToken ct)
         {
-            _audit.AuditCover(auditEvent);
+            await _audit.AuditCover(auditEvent, ct);
         }
     }
 }

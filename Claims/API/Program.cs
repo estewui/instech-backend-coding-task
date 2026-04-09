@@ -49,6 +49,9 @@ builder.Services.AddSingleton(auditChannel);
 
 builder.Services.AddSingleton<IAuditSink, ChannelAuditSink>();
 
+// Register TimeProvider for time-dependent services
+builder.Services.AddSingleton(TimeProvider.System);
+
 // Register background worker
 builder.Services.AddHostedService<AuditBackgroundService>();
 

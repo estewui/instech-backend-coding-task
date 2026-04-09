@@ -4,7 +4,6 @@ using AutoMapper;
 
 using API.Contracts.Requests;
 using API.Contracts.Responses;
-using Application.Common.Auditing;
 using Application.Services;
 using Domain.Entities;
 
@@ -16,14 +15,12 @@ namespace API.Controllers
     {
         private readonly ILogger<ClaimsController> _logger;
         private readonly IClaimService _claimService;
-        private readonly IAuditSink _auditSink;
         private readonly IMapper _mapper;
 
-        public ClaimsController(ILogger<ClaimsController> logger, IClaimService claimService, IAuditSink auditSink, IMapper mapper)
+        public ClaimsController(ILogger<ClaimsController> logger, IClaimService claimService, IMapper mapper)
         {
             _logger = logger;
             _claimService = claimService;
-            _auditSink = auditSink;
             _mapper = mapper;
         }
 
@@ -56,18 +53,9 @@ namespace API.Controllers
         {
             try
             {
-                var claim = _mapper.Map<Claim>(request);            
+                var claim = _mapper.Map<Claim>(request);
                 var createdClaim = await _claimService.CreateClaimAsync(claim, cancellationToken);
                 var response = _mapper.Map<ClaimResponse>(createdClaim);
-            
-                await _auditSink.EnqueueAsync(new AuditEvent
-                {
-                    Type = AuditType.Claim,
-                    EntityId = createdClaim.Id,
-                    HttpRequestType = "POST",
-                    Timestamp = DateTime.UtcNow
-                });
-            
                 return Ok(response);
             }
             catch (FluentValidation.ValidationException ex)
@@ -92,14 +80,7 @@ namespace API.Controllers
         {
             try
             {
-                _claimService.DeleteClaimById(id, cancellationToken);
-                await _auditSink.EnqueueAsync(new AuditEvent
-                {
-                    Type = AuditType.Claim,
-                    EntityId = id,
-                    HttpRequestType = "DELETE",
-                    Timestamp = DateTime.UtcNow
-                });
+                await _claimService.DeleteClaimById(id, cancellationToken);
                 return Ok();
             }
             catch (Exception ex)
@@ -122,7 +103,7 @@ namespace API.Controllers
                 var claim = await _claimService.GetClaimByIdAsync(id, cancellationToken);
                 if (claim == null)
                     return NotFound();
-            
+
                 var response = _mapper.Map<ClaimResponse>(claim);
                 return Ok(response);
             }

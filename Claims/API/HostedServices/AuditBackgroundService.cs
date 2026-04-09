@@ -25,42 +25,65 @@ namespace API.HostedServices
         {
             var buffer = new List<AuditEvent>();
 
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                try
+                await foreach (var evt in _channel.Reader.ReadAllAsync(stoppingToken))
                 {
-                    var first = await _channel.Reader.ReadAsync(stoppingToken);
-                    buffer.Add(first);
+                    buffer.Add(evt);
 
-                    while (_channel.Reader.TryRead(out var evt))
-                        buffer.Add(evt);
+                    // Drain any additional events already queued
+                    while (_channel.Reader.TryRead(out var extra))
+                        buffer.Add(extra);
 
-                    using var scope = _scopeFactory.CreateScope();
-                    var auditService = scope.ServiceProvider.GetRequiredService<IAuditService>();
+                    await FlushBufferAsync(buffer);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Shutdown requested — fall through to drain remaining events
+            }
 
-                    foreach (var auditEvent in buffer)
+            // Graceful shutdown: drain all events still in the channel
+            while (_channel.Reader.TryRead(out var remaining))
+                buffer.Add(remaining);
+
+            if (buffer.Count > 0)
+            {
+                _logger.LogInformation($"Draining {buffer.Count} remaining audit event(s) on shutdown.");
+                await FlushBufferAsync(buffer);
+            }
+        }
+
+        private async Task FlushBufferAsync(List<AuditEvent> buffer)
+        {
+            try
+            {
+                using var scope = _scopeFactory.CreateScope();
+                var auditService = scope.ServiceProvider.GetRequiredService<IAuditService>();
+
+                foreach (var auditEvent in buffer)
+                {
+                    switch (auditEvent.Type)
                     {
-                        switch (auditEvent.Type)
-                        {
-                            case AuditType.Claim:
-                                auditService.AuditClaim(auditEvent);
-                                break;
-                            case AuditType.Cover:
-                                auditService.AuditCover(auditEvent);
-                                break;
-                            default:
-                                throw new Exception($"Unknown audit type: {auditEvent.Type}");
-                        }
+                        case AuditType.Claim:
+                            await auditService.AuditClaim(auditEvent, CancellationToken.None);
+                            break;
+                        case AuditType.Cover:
+                            await auditService.AuditCover(auditEvent, CancellationToken.None);
+                            break;
+                        default:
+                            _logger.LogWarning($"Unknown audit type: {auditEvent.Type}");
+                            break;
                     }
-
-                    buffer.Clear();
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Audit background worker failure.");
-                    buffer.Clear();
-                    await Task.Delay(1000, stoppingToken);
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Audit background worker failure while flushing {Count} event(s).", buffer.Count);
+            }
+            finally
+            {
+                buffer.Clear();
             }
         }
     }

@@ -4,7 +4,6 @@ using AutoMapper;
 
 using API.Contracts.Requests;
 using API.Contracts.Responses;
-using Application.Common.Auditing;
 using Application.Services;
 using Domain.Entities;
 
@@ -16,14 +15,12 @@ public class CoversController : ControllerBase
 {
     private readonly ILogger<CoversController> _logger;
     private readonly ICoverService _coverService;
-    private readonly IAuditSink _auditSink;
     private readonly IMapper _mapper;
 
-    public CoversController(ILogger<CoversController> logger, ICoverService coverService, IAuditSink auditSink, IMapper mapper)
+    public CoversController(ILogger<CoversController> logger, ICoverService coverService, IMapper mapper)
     {
         _logger = logger;
         _coverService = coverService;
-        _auditSink = auditSink;
         _mapper = mapper;
     }
 
@@ -80,7 +77,7 @@ public class CoversController : ControllerBase
             var result = await _coverService.GetById(id, cancellationToken);
             if (result == null)
                 return NotFound();
-        
+
             var response = _mapper.Map<CoverResponse>(result);
             return Ok(response);
         }
@@ -102,17 +99,8 @@ public class CoversController : ControllerBase
         try
         {
             var cover = _mapper.Map<Cover>(request);
-            await _coverService.Create(cover, cancellationToken);
-            var response = _mapper.Map<CoverResponse>(cover);
-        
-            await _auditSink.EnqueueAsync(new AuditEvent
-            {
-                Type = AuditType.Cover,
-                EntityId = cover.Id,
-                HttpRequestType = "POST",
-                Timestamp = DateTime.UtcNow
-            });
-        
+            var created = await _coverService.Create(cover, cancellationToken);
+            var response = _mapper.Map<CoverResponse>(created);
             return Ok(response);
         }
         catch (FluentValidation.ValidationException ex)
@@ -138,13 +126,6 @@ public class CoversController : ControllerBase
         try
         {
             await _coverService.DeleteById(id, cancellationToken);
-            await _auditSink.EnqueueAsync(new AuditEvent
-            {
-                Type = AuditType.Cover,
-                EntityId = id,
-                HttpRequestType = "DELETE",
-                Timestamp = DateTime.UtcNow
-            });
             return NoContent();
         }
         catch (Exception ex)

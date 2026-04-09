@@ -7,14 +7,14 @@ namespace Application.Covers.CreateCover
 {
     public class CreateCoverValidator: AbstractValidator<Cover>
     {
-        public CreateCoverValidator()
+        public CreateCoverValidator(TimeProvider timeProvider)
         {
             RuleFor(x => x.StartDate)
                 .LessThan(x => x.EndDate)
                 .WithMessage("Start date has to be before End date.");
 
             RuleFor(x => x.StartDate)
-                .GreaterThan(x => DateTime.UtcNow)
+                .GreaterThan(x => timeProvider.GetUtcNow().UtcDateTime)
                 .WithMessage("Start date cannot be in the past.");
 
             RuleFor(x => x)
